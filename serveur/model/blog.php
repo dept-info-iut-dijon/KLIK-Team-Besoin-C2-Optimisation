@@ -1,81 +1,69 @@
 <?php
+
 class Blog {
-    private int $id;
-    private string $title;
-    private string $img;
-    private DateTime $date;
-    private string $content;
+    private int $blogId;
+    private string $blogTitle;
+    private string $blogImg;
+    private DateTime $blogDate;
+    private string $blogContent;
     private User $user;
 
-      // Constructor
-      public function __construct(
-        int $id,
-        string $title,
-        string $img,
-        DateTime $date,
-        string $content,
-        User $user
-    ) {
-        $this->id = $id;
-        $this->title = $title;
-        $this->img = $img;
-        $this->date = $date;
-        $this->content = $content;
+    public function __construct(int $blogId, string $blogTitle, string $blogImg, DateTime $blogDate, string $blogContent, User $user) {
+        $this->blogId = $blogId;
+        $this->blogTitle = $blogTitle;
+        $this->blogImg = $blogImg;
+        $this->blogDate = $blogDate;
+        $this->blogContent = $blogContent;
         $this->user = $user;
     }
 
-    // Getter and Setter for id
-    public function getId(): int {
-        return $this->id;
+    // Getters
+    public function getBlogId(): int {
+        return $this->blogId;
     }
 
-    public function setId(int $id): void {
-        $this->id = $id;
+    public function getBlogTitle(): string {
+        return $this->blogTitle;
     }
 
-    // Getter and Setter for title
-    public function getTitle(): string {
-        return $this->title;
+    public function getBlogImg(): string {
+        return $this->blogImg;
     }
 
-    public function setTitle(string $title): void {
-        $this->title = $title;
+    public function getBlogDate(): DateTime {
+        return $this->blogDate;
     }
 
-    // Getter and Setter for img
-    public function getImg(): string {
-        return $this->img;
+    public function getBlogContent(): string {
+        return $this->blogContent;
     }
 
-    public function setImg(string $img): void {
-        $this->img = $img;
-    }
-
-    // Getter and Setter for date
-    public function getDate(): DateTime {
-        return $this->date;
-    }
-
-    public function setDate(DateTime $date): void {
-        $this->date = $date;
-    }
-
-    // Getter and Setter for content
-    public function getContent(): string {
-        return $this->content;
-    }
-
-    public function setContent(string $content): void {
-        $this->content = $content;
-    }
-
-    // Getter and Setter for userId
     public function getUser(): User {
         return $this->user;
+    }
+
+    // Setters
+    public function setBlogId(int $blogId): void {
+        $this->blogId = $blogId;
+    }
+
+    public function setBlogTitle(string $blogTitle): void {
+        $this->blogTitle = $blogTitle;
+    }
+
+    public function setBlogImg(string $blogImg): void {
+        $this->blogImg = $blogImg;
+    }
+
+    public function setBlogDate(DateTime $blogDate): void {
+        $this->blogDate = $blogDate;
+    }
+
+    public function setBlogContent(string $blogContent): void {
+        $this->blogContent = $blogContent;
     }
 
     public function setUser(User $user): void {
         $this->user = $user;
     }
 }
-?>

@@ -1,6 +1,6 @@
 <?php
-class Poll
-{
+
+class Poll {
     private int $pollId;
     private string $pollSubject;
     private DateTime $pollCreated;
@@ -8,19 +8,9 @@ class Poll
     private bool $pollStatus;
     private string $pollDescription;
     private bool $pollLocked;
-    private User $pollUser;
+    private User $user;
 
-    // Constructor
-    public function __construct(
-        int $pollId,
-        string $pollSubject,
-        DateTime $pollCreated,
-        DateTime $pollModified,
-        bool $pollStatus,
-        string $pollDescription,
-        bool $pollLocked,
-        User $pollUser
-    ) {
+    public function __construct(int $pollId, string $pollSubject, DateTime $pollCreated, DateTime $pollModified, bool $pollStatus, string $pollDescription, bool $pollLocked, User $user) {
         $this->pollId = $pollId;
         $this->pollSubject = $pollSubject;
         $this->pollCreated = $pollCreated;
@@ -28,94 +18,72 @@ class Poll
         $this->pollStatus = $pollStatus;
         $this->pollDescription = $pollDescription;
         $this->pollLocked = $pollLocked;
-        $this->pollUser = $pollUser;
+        $this->user = $user;
     }
 
-    // Getter and Setter for pollId
-    public function getPollId(): int
-    {
+    // Getters
+    public function getPollId(): int {
         return $this->pollId;
     }
 
-    public function setPollId(int $pollId): void
-    {
-        $this->pollId = $pollId;
-    }
-
-    // Getter and Setter for pollSubject
-    public function getPollSubject(): string
-    {
+    public function getPollSubject(): string {
         return $this->pollSubject;
     }
 
-    public function setPollSubject(string $pollSubject): void
-    {
-        $this->pollSubject = $pollSubject;
-    }
-
-    // Getter and Setter for pollCreated
-    public function getPollCreated(): DateTime
-    {
+    public function getPollCreated(): DateTime {
         return $this->pollCreated;
     }
 
-    public function setPollCreated(DateTime $pollCreated): void
-    {
-        $this->pollCreated = $pollCreated;
-    }
-
-    // Getter and Setter for pollModified
-    public function getPollModified(): DateTime
-    {
+    public function getPollModified(): DateTime {
         return $this->pollModified;
     }
 
-    public function setPollModified(DateTime $pollModified): void
-    {
-        $this->pollModified = $pollModified;
-    }
-
-    // Getter and Setter for pollStatus
-    public function isPollStatus(): bool
-    {
+    public function getPollStatus(): bool {
         return $this->pollStatus;
     }
 
-    public function setPollStatus(bool $pollStatus): void
-    {
-        $this->pollStatus = $pollStatus;
-    }
-
-    // Getter and Setter for pollDescription
-    public function getPollDescription(): string
-    {
+    public function getPollDescription(): string {
         return $this->pollDescription;
     }
 
-    public function setPollDescription(string $pollDescription): void
-    {
-        $this->pollDescription = $pollDescription;
-    }
-
-    // Getter and Setter for pollLocked
-    public function isPollLocked(): bool
-    {
+    public function getPollLocked(): bool {
         return $this->pollLocked;
     }
 
-    public function setPollLocked(bool $pollLocked): void
-    {
+    public function getUser(): User {
+        return $this->user;
+    }
+
+    // Setters
+    public function setPollId(int $pollId): void {
+        $this->pollId = $pollId;
+    }
+
+    public function setPollSubject(string $pollSubject): void {
+        $this->pollSubject = $pollSubject;
+    }
+
+    public function setPollCreated(DateTime $pollCreated): void {
+        $this->pollCreated = $pollCreated;
+    }
+
+    public function setPollModified(DateTime $pollModified): void {
+        $this->pollModified = $pollModified;
+    }
+
+    public function setPollStatus(bool $pollStatus): void {
+        $this->pollStatus = $pollStatus;
+    }
+
+    public function setPollDescription(string $pollDescription): void {
+        $this->pollDescription = $pollDescription;
+    }
+
+    public function setPollLocked(bool $pollLocked): void {
         $this->pollLocked = $pollLocked;
     }
 
-    // Getter and Setter for pollUser
-    public function getPollUser(): User
-    {
-        return $this->pollUser;
-    }
-
-    public function setPollUser(User $pollUser): void
-    {
-        $this->pollUser = $pollUser;
+    public function setUser(User $user): void {
+        $this->user = $user;
     }
 }

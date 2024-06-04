@@ -1,70 +1,59 @@
 <?php
-class Post{
+
+class Post {
     private int $postId;
     private string $postContent;
     private DateTime $postDate;
-    private int $postTopic;
-    private User $postUser;
+    private Topic $topic;
+    private User $user;
 
-    
-    // Constructor
-    public function __construct(
-        int $postId,
-        string $postContent,
-        DateTime $postDate,
-        int $postTopic,
-        User $postUser
-    ) {
+    public function __construct(int $postId, string $postContent, DateTime $postDate, Topic $topic, User $user) {
         $this->postId = $postId;
         $this->postContent = $postContent;
         $this->postDate = $postDate;
-        $this->postTopic = $postTopic;
-        $this->postUser = $postUser;
+        $this->topic = $topic;
+        $this->user = $user;
     }
 
-    // Getter and Setter for postId
+    // Getters
     public function getPostId(): int {
         return $this->postId;
     }
 
-    public function setPostId(int $postId): void {
-        $this->postId = $postId;
-    }
-
-    // Getter and Setter for postContent
     public function getPostContent(): string {
         return $this->postContent;
+    }
+
+    public function getPostDate(): DateTime {
+        return $this->postDate;
+    }
+
+    public function getTopic(): Topic {
+        return $this->topic;
+    }
+
+    public function getUser(): User {
+        return $this->user;
+    }
+
+    // Setters
+    public function setPostId(int $postId): void {
+        $this->postId = $postId;
     }
 
     public function setPostContent(string $postContent): void {
         $this->postContent = $postContent;
     }
 
-    // Getter and Setter for postDate
-    public function getPostDate(): DateTime {
-        return $this->postDate;
-    }
-
     public function setPostDate(DateTime $postDate): void {
         $this->postDate = $postDate;
     }
 
-    // Getter and Setter for postTopic
-    public function getPostTopic(): int {
-        return $this->postTopic;
+    public function setTopic(Topic $topic): void {
+        $this->topic = $topic;
     }
 
-    public function setPostTopic(int $postTopic): void {
-        $this->postTopic = $postTopic;
-    }
-
-    // Getter and Setter for postUser
-    public function getPostUser(): User {
-        return $this->postUser;
-    }
-
-    public function setPostUser(User $postUser): void {
-        $this->postUser = $postUser;
+    public function setUser(User $user): void {
+        $this->user = $user;
     }
 }
-?>

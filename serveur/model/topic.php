@@ -1,70 +1,59 @@
 <?php
 
-class Topic
-{
+class Topic {
     private int $topicId;
     private string $topicSubject;
     private DateTime $topicDate;
-    private int $topicCategory;
-    private User $topicUser;
+    private Category $category;
+    private User $user;
 
-    // Constructor
-    public function __construct(
-        int $topicId,
-        string $topicSubject,
-        DateTime $topicDate,
-        int $topicCategory,
-        User $topicUser
-    ) {
+    public function __construct(int $topicId, string $topicSubject, DateTime $topicDate, Category $category, User $user) {
         $this->topicId = $topicId;
         $this->topicSubject = $topicSubject;
         $this->topicDate = $topicDate;
-        $this->topicCategory = $topicCategory;
-        $this->topicUser = $topicUser;
+        $this->category = $category;
+        $this->user = $user;
     }
 
-    // Getter and Setter for topicId
+    // Getters
     public function getTopicId(): int {
         return $this->topicId;
     }
 
-    public function setTopicId(int $topicId): void {
-        $this->topicId = $topicId;
-    }
-
-    // Getter and Setter for topicSubject
     public function getTopicSubject(): string {
         return $this->topicSubject;
+    }
+
+    public function getTopicDate(): DateTime {
+        return $this->topicDate;
+    }
+
+    public function getCategory(): Category {
+        return $this->category;
+    }
+
+    public function getUser(): User {
+        return $this->user;
+    }
+
+    // Setters
+    public function setTopicId(int $topicId): void {
+        $this->topicId = $topicId;
     }
 
     public function setTopicSubject(string $topicSubject): void {
         $this->topicSubject = $topicSubject;
     }
 
-    // Getter and Setter for topicDate
-    public function getTopicDate(): DateTime {
-        return $this->topicDate;
-    }
-
     public function setTopicDate(DateTime $topicDate): void {
         $this->topicDate = $topicDate;
     }
 
-    // Getter and Setter for topicCategory
-    public function getTopicCategory(): int {
-        return $this->topicCategory;
+    public function setCategory(Category $category): void {
+        $this->category = $category;
     }
 
-    public function setTopicCategory(int $topicCategory): void {
-        $this->topicCategory = $topicCategory;
-    }
-
-    // Getter and Setter for topicUser
-    public function getTopicUser(): User {
-        return $this->topicUser;
-    }
-
-    public function setTopicUser(User $topicUser): void {
-        $this->topicUser = $topicUser;
+    public function setUser(User $user): void {
+        $this->user = $user;
     }
 }

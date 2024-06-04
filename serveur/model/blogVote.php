@@ -1,80 +1,59 @@
 <?php
 
-class BlogVote
-{
+class BlogVote {
     private int $blogVoteId;
     private DateTime $blogVoteDate;
     private int $blogVote;
-    private User $blogVoteUser;
-    private Blog $blogVoteBlog;
+    private User $user;
+    private Blog $blog;
 
-    // Constructor
-    public function __construct(
-        int $blogVoteId,
-        DateTime $blogVoteDate,
-        int $blogVote,
-        User $blogVoteUser,
-        Blog $blogVoteBlog
-    ) {
+    public function __construct(int $blogVoteId, DateTime $blogVoteDate, int $blogVote, User $user, Blog $blog) {
         $this->blogVoteId = $blogVoteId;
         $this->blogVoteDate = $blogVoteDate;
         $this->blogVote = $blogVote;
-        $this->blogVoteUser = $blogVoteUser;
-        $this->blogVoteBlog = $blogVoteBlog;
+        $this->user = $user;
+        $this->blog = $blog;
     }
 
-    // Getter and Setter for blogVoteId
-    public function getBlogVoteId(): int
-    {
+    // Getters
+    public function getBlogVoteId(): int {
         return $this->blogVoteId;
     }
 
-    public function setBlogVoteId(int $blogVoteId): void
-    {
-        $this->blogVoteId = $blogVoteId;
-    }
-
-    // Getter and Setter for blogVoteDate
-    public function getBlogVoteDate(): DateTime
-    {
+    public function getBlogVoteDate(): DateTime {
         return $this->blogVoteDate;
     }
 
-    public function setBlogVoteDate(DateTime $blogVoteDate): void
-    {
-        $this->blogVoteDate = $blogVoteDate;
-    }
-
-    // Getter and Setter for blogVote
-    public function getBlogVote(): int
-    {
+    public function getBlogVote(): int {
         return $this->blogVote;
     }
 
-    public function setBlogVote(int $blogVote): void
-    {
+    public function getUser(): User {
+        return $this->user;
+    }
+
+    public function getBlog(): Blog {
+        return $this->blog;
+    }
+
+    // Setters
+    public function setBlogVoteId(int $blogVoteId): void {
+        $this->blogVoteId = $blogVoteId;
+    }
+
+    public function setBlogVoteDate(DateTime $blogVoteDate): void {
+        $this->blogVoteDate = $blogVoteDate;
+    }
+
+    public function setBlogVote(int $blogVote): void {
         $this->blogVote = $blogVote;
     }
 
-    // Getter and Setter for blogVoteUser
-    public function getBlogVoteUser(): User
-    {
-        return $this->blogVoteUser;
+    public function setUser(User $user): void {
+        $this->user = $user;
     }
 
-    public function setBlogVoteUser(User $blogVoteUser): void
-    {
-        $this->blogVoteUser = $blogVoteUser;
-    }
-
-    // Getter and Setter for blogVoteBlog
-    public function getBlogVoteBlog(): Blog
-    {
-        return $this->blogVoteBlog;
-    }
-
-    public function setBlogVoteBlog(Blog $blogVoteBlog): void
-    {
-        $this->blogVoteBlog = $blogVoteBlog;
+    public function setBlog(Blog $blog): void {
+        $this->blog = $blog;
     }
 }
