@@ -1,6 +1,6 @@
 <?php
 
-class BlogVotes
+class BlogVote
 {
     private int $blogVoteId;
     private DateTime $blogVoteDate;

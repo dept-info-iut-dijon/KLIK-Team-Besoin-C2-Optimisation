@@ -1,5 +1,5 @@
 <?php
-class PostVotes
+class PostVote
 {
     private int $postVoteId;
     private DateTime $postVoteDate;
