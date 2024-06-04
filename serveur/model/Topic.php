@@ -1,5 +1,6 @@
 <?php
-class topic
+
+class Topic
 {
     private int $topicId;
     private string $topicSubject;
