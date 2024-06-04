@@ -1,69 +1,70 @@
 <?php
 class Post{
-    private int $id;
-    private string $content;
-    private DateTime $date;
-    private int $topicId;
-    private User $user;
+    private int $postId;
+    private string $postContent;
+    private DateTime $postDate;
+    private int $postTopic;
+    private User $postUser;
 
-     // Constructor
-     public function __construct(
-        int $id,
-        string $content,
-        DateTime $date,
-        int $topicId,
-        User $user
+    
+    // Constructor
+    public function __construct(
+        int $postId,
+        string $postContent,
+        DateTime $postDate,
+        int $postTopic,
+        User $postUser
     ) {
-        $this->id = $id;
-        $this->content = $content;
-        $this->date = $date;
-        $this->topicId = $topicId;
-        $this->user = $user;
+        $this->postId = $postId;
+        $this->postContent = $postContent;
+        $this->postDate = $postDate;
+        $this->postTopic = $postTopic;
+        $this->postUser = $postUser;
     }
 
-    // Getter and Setter for id
-    public function getId(): int {
-        return $this->id;
+    // Getter and Setter for postId
+    public function getPostId(): int {
+        return $this->postId;
     }
 
-    public function setId(int $id): void {
-        $this->id = $id;
+    public function setPostId(int $postId): void {
+        $this->postId = $postId;
     }
 
-    // Getter and Setter for content
-    public function getContent(): string {
-        return $this->content;
+    // Getter and Setter for postContent
+    public function getPostContent(): string {
+        return $this->postContent;
     }
 
-    public function setContent(string $content): void {
-        $this->content = $content;
+    public function setPostContent(string $postContent): void {
+        $this->postContent = $postContent;
     }
 
-    // Getter and Setter for date
-    public function getDate(): DateTime {
-        return $this->date;
+    // Getter and Setter for postDate
+    public function getPostDate(): DateTime {
+        return $this->postDate;
     }
 
-    public function setDate(DateTime $date): void {
-        $this->date = $date;
+    public function setPostDate(DateTime $postDate): void {
+        $this->postDate = $postDate;
     }
 
-    // Getter and Setter for topicId
-    public function getTopicId(): int {
-        return $this->topicId;
+    // Getter and Setter for postTopic
+    public function getPostTopic(): int {
+        return $this->postTopic;
     }
 
-    public function setTopicId(int $topicId): void {
-        $this->topicId = $topicId;
+    public function setPostTopic(int $postTopic): void {
+        $this->postTopic = $postTopic;
     }
 
-    // Getter and Setter for userId
-    public function getUser(): User {
-        return $this->user;
+    // Getter and Setter for postUser
+    public function getPostUser(): User {
+        return $this->postUser;
     }
 
-    public function setUserId(User $user): void {
-        $this->user = $user;
+    public function setPostUser(User $postUser): void {
+        $this->postUser = $postUser;
     }
 }
 ?>

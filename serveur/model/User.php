@@ -1,52 +1,79 @@
 <?php
 
 class User {
-    private int $id;
-    private int $level;
-    private string $first_name;
-    private string $last_name;
+    private int $userId;
+    private int $userLevel;
+    private string $userFirstName;
+    private string $userLastName;
     private string $username;
-    private string $email;
-    private string $passwordHash;
-    private string $gender;
-    private string $headline;
-    private string $bio;
-    private string $img;
+    private string $userEmail;
+    private string $userPassword;
+    private string $userGender;
+    private string $userHeadline;
+    private string $userBio;
+    private string $userImg;
 
-     // Getter and Setter for id
-     public function getId(): int {
-        return $this->id;
+    // Constructor
+    public function __construct(
+        int $userId,
+        int $userLevel,
+        string $userFirstName,
+        string $userLastName,
+        string $username,
+        string $userEmail,
+        string $userPassword,
+        string $userGender,
+        string $userHeadline,
+        string $userBio,
+        string $userImg
+    ) {
+        $this->userId = $userId;
+        $this->userLevel = $userLevel;
+        $this->userFirstName = $userFirstName;
+        $this->userLastName = $userLastName;
+        $this->username = $username;
+        $this->userEmail = $userEmail;
+        $this->userPassword = $userPassword;
+        $this->userGender = $userGender;
+        $this->userHeadline = $userHeadline;
+        $this->userBio = $userBio;
+        $this->userImg = $userImg;
     }
 
-    public function setId(int $id): void {
-        $this->id = $id;
+    // Getter and Setter for userId
+    public function getUserId(): int {
+        return $this->userId;
     }
 
-    // Getter and Setter for level
-    public function getLevel(): int {
-        return $this->level;
+    public function setUserId(int $userId): void {
+        $this->userId = $userId;
     }
 
-    public function setLevel(int $level): void {
-        $this->level = $level;
+    // Getter and Setter for userLevel
+    public function getUserLevel(): int {
+        return $this->userLevel;
     }
 
-    // Getter and Setter for first_name
-    public function getFirstName(): string {
-        return $this->first_name;
+    public function setUserLevel(int $userLevel): void {
+        $this->userLevel = $userLevel;
     }
 
-    public function setFirstName(string $first_name): void {
-        $this->first_name = $first_name;
+    // Getter and Setter for userFirstName
+    public function getUserFirstName(): string {
+        return $this->userFirstName;
     }
 
-    // Getter and Setter for last_name
-    public function getLastName(): string {
-        return $this->last_name;
+    public function setUserFirstName(string $userFirstName): void {
+        $this->userFirstName = $userFirstName;
     }
 
-    public function setLastName(string $last_name): void {
-        $this->last_name = $last_name;
+    // Getter and Setter for userLastName
+    public function getUserLastName(): string {
+        return $this->userLastName;
+    }
+
+    public function setUserLastName(string $userLastName): void {
+        $this->userLastName = $userLastName;
     }
 
     // Getter and Setter for username
@@ -58,85 +85,58 @@ class User {
         $this->username = $username;
     }
 
-    // Getter and Setter for email
-    public function getEmail(): string {
-        return $this->email;
+    // Getter and Setter for userEmail
+    public function getUserEmail(): string {
+        return $this->userEmail;
     }
 
-    public function setEmail(string $email): void {
-        $this->email = $email;
+    public function setUserEmail(string $userEmail): void {
+        $this->userEmail = $userEmail;
     }
 
-    // Getter and Setter for password_hash
-    public function getPasswordHash(): string {
-        return $this->passwordHash;
+    // Getter and Setter for userPassword
+    public function getUserPassword(): string {
+        return $this->userPassword;
     }
 
-    public function setPasswordHash(string $passwordHash): void {
-        $this->passwordHash = $passwordHash;
+    public function setUserPassword(string $userPassword): void {
+        $this->userPassword = $userPassword;
     }
 
-    // Getter and Setter for gender
-    public function getGender(): string {
-        return $this->gender;
+    // Getter and Setter for userGender
+    public function getUserGender(): string {
+        return $this->userGender;
     }
 
-    public function setGender(string $gender): void {
-        $this->gender = $gender;
+    public function setUserGender(string $userGender): void {
+        $this->userGender = $userGender;
     }
 
-    // Getter and Setter for headline
-    public function getHeadline(): string {
-        return $this->headline;
+    // Getter and Setter for userHeadline
+    public function getUserHeadline(): string {
+        return $this->userHeadline;
     }
 
-    public function setHeadline(string $headline): void {
-        $this->headline = $headline;
+    public function setUserHeadline(string $userHeadline): void {
+        $this->userHeadline = $userHeadline;
     }
 
-    // Getter and Setter for bio
-    public function getBio(): string {
-        return $this->bio;
+    // Getter and Setter for userBio
+    public function getUserBio(): string {
+        return $this->userBio;
     }
 
-    public function setBio(string $bio): void {
-        $this->bio = $bio;
+    public function setUserBio(string $userBio): void {
+        $this->userBio = $userBio;
     }
 
-    // Getter and Setter for img
-    public function getImg(): string {
-        return $this->img;
+    // Getter and Setter for userImg
+    public function getUserImg(): string {
+        return $this->userImg;
     }
 
-    public function setImg(string $img): void {
-        $this->img = $img;
-    }
-
-     // Constructor
-     public function __construct(
-        int $id,
-        int $level,
-        string $first_name,
-        string $last_name,
-        string $username,
-        string $email,
-        string $passwordHash,
-        string $gender,
-        string $headline,
-        string $bio,
-        string $img
-    ) {
-        $this->id = $id;
-        $this->level = $level;
-        $this->first_name = $first_name;
-        $this->last_name = $last_name;
-        $this->username = $username;
-        $this->email = $email;
-        $this->passwordHash = $passwordHash;
-        $this->gender = $gender;
-        $this->headline = $headline;
-        $this->bio = $bio;
-        $this->img = $img;
+    public function setUserImg(string $userImg): void {
+        $this->userImg = $userImg;
     }
 }
 

@@ -1,79 +1,70 @@
 <?php
 class PostVotes
 {
-    private int $id;
-    private DateTime $date;
-    private int $vote;
-    private Post $post;
-    private User $user;
+    private int $postVoteId;
+    private DateTime $postVoteDate;
+    private int $postVote;
+    private Post $postVotePost;
+    private User $postVoteUser;
 
-    // Constructor
-    public function __construct(
-        int $id,
-        DateTime $date,
-        int $vote,
-        Post $post,
-        User $user
-    ) {
-        $this->id = $id;
-        $this->date = $date;
-        $this->vote = $vote;
-        $this->post = $post;
-        $this->user = $user;
-    }
+  
+  // Constructor
+  public function __construct(
+    int $postVoteId,
+    DateTime $postVoteDate,
+    int $postVote,
+    Post $postVotePost,
+    User $postVoteUser
+) {
+    $this->postVoteId = $postVoteId;
+    $this->postVoteDate = $postVoteDate;
+    $this->postVote = $postVote;
+    $this->postVotePost = $postVotePost;
+    $this->postVoteUser = $postVoteUser;
+}
 
-    // Getter and Setter for id
-    public function getId(): int
-    {
-        return $this->id;
-    }
+// Getter and Setter for postVoteId
+public function getPostVoteId(): int {
+    return $this->postVoteId;
+}
 
-    public function setId(int $id): void
-    {
-        $this->id = $id;
-    }
+public function setPostVoteId(int $postVoteId): void {
+    $this->postVoteId = $postVoteId;
+}
 
-    // Getter and Setter for date
-    public function getDate(): DateTime
-    {
-        return $this->date;
-    }
+// Getter and Setter for postVoteDate
+public function getPostVoteDate(): DateTime {
+    return $this->postVoteDate;
+}
 
-    public function setDate(DateTime $date): void
-    {
-        $this->date = $date;
-    }
+public function setPostVoteDate(DateTime $postVoteDate): void {
+    $this->postVoteDate = $postVoteDate;
+}
 
-    // Getter and Setter for vote
-    public function getVote(): int
-    {
-        return $this->vote;
-    }
+// Getter and Setter for postVote
+public function getPostVote(): int {
+    return $this->postVote;
+}
 
-    public function setVote(int $vote): void
-    {
-        $this->vote = $vote;
-    }
+public function setPostVote(int $postVote): void {
+    $this->postVote = $postVote;
+}
 
-    // Getter and Setter for postId
-    public function getPostId(): Post
-    {
-        return $this->post;
-    }
+// Getter and Setter for postVotePost
+public function getPostVotePost(): Post {
+    return $this->postVotePost;
+}
 
-    public function setPostId(Post $post): void
-    {
-        $this->post = $post;
-    }
+public function setPostVotePost(Post $postVotePost): void {
+    $this->postVotePost = $postVotePost;
+}
 
-    // Getter and Setter for userId
-    public function getUser(): User
-    {
-        return $this->user;
-    }
+// Getter and Setter for postVoteUser
+public function getPostVoteUser(): User {
+    return $this->postVoteUser;
+}
 
-    public function setUserI(User $user): void
-    {
-        $this->user = $user;
-    }
+public function setPostVoteUser(User $postVoteUser): void {
+    $this->postVoteUser = $postVoteUser;
+}
 }
