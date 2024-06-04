@@ -7,24 +7,24 @@ class User {
     private string $userLastName;
     private string $username;
     private string $userEmail;
-    private string $userPasswordHash;
+    private string $userPassword;
     private string $userGender;
     private string $userHeadline;
     private string $userBio;
-    private string $userImg;
+    private string $userImage;
 
-    public function __construct(int $userId, int $userLevel, string $userFirstName, string $userLastName, string $username, string $userEmail, string $userPasswordHash, string $userGender, string $userHeadline, string $userBio, string $userImg) {
+    public function __construct(int $userId, int $userLevel, string $userFirstName, string $userLastName, string $username, string $userEmail, string $userPassword, string $userGender, string $userHeadline, string $userBio, string $userImage) {
         $this->userId = $userId;
         $this->userLevel = $userLevel;
         $this->userFirstName = $userFirstName;
         $this->userLastName = $userLastName;
         $this->username = $username;
         $this->userEmail = $userEmail;
-        $this->userPasswordHash = $userPasswordHash;
+        $this->userPassword = $userPassword;
         $this->userGender = $userGender;
         $this->userHeadline = $userHeadline;
         $this->userBio = $userBio;
-        $this->userImg = $userImg;
+        $this->userImage = $userImage;
     }
 
     // Getters
@@ -53,7 +53,7 @@ class User {
     }
 
     public function getUserPasswordHash(): string {
-        return $this->userPasswordHash;
+        return $this->userPassword;
     }
 
     public function getUserGender(): string {
@@ -68,8 +68,8 @@ class User {
         return $this->userBio;
     }
 
-    public function getUserImg(): string {
-        return $this->userImg;
+    public function getUserImage(): string {
+        return $this->userImage;
     }
 
     // Setters
@@ -97,8 +97,8 @@ class User {
         $this->userEmail = $userEmail;
     }
 
-    public function setUserPasswordHash(string $userPasswordHash): void {
-        $this->userPasswordHash = $userPasswordHash;
+    public function setUserPasswordHash(string $userPassword): void {
+        $this->userPassword = $userPassword;
     }
 
     public function setUserGender(string $userGender): void {
@@ -113,7 +113,7 @@ class User {
         $this->userBio = $userBio;
     }
 
-    public function setUserImg(string $userImg): void {
-        $this->userImg = $userImg;
+    public function setUserImage(string $userImage): void {
+        $this->userImage = $userImage;
     }
 }

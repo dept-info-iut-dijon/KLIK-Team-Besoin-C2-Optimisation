@@ -21,7 +21,7 @@ class UserDAO implements UserDAOInterface {
             $user->getUserGender(),
             $user->getUserHeadline(),
             $user->getUserBio(),
-            $user->getUserImg()
+            $user->getUserImage()
         ]);
     }
 
@@ -62,7 +62,7 @@ class UserDAO implements UserDAOInterface {
             $user->getUserGender(),
             $user->getUserHeadline(),
             $user->getUserBio(),
-            $user->getUserImg(),
+            $user->getUserImage(),
             $user->getUserId()
         ]);
     }

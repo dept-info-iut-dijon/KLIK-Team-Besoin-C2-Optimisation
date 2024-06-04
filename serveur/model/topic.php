@@ -4,15 +4,15 @@ class Topic {
     private int $topicId;
     private string $topicSubject;
     private DateTime $topicDate;
-    private Category $category;
-    private User $user;
+    private Category $topicCategory;
+    private User $topicUser;
 
     public function __construct(int $topicId, string $topicSubject, DateTime $topicDate, Category $category, User $user) {
         $this->topicId = $topicId;
         $this->topicSubject = $topicSubject;
         $this->topicDate = $topicDate;
-        $this->category = $category;
-        $this->user = $user;
+        $this->topicCategory = $category;
+        $this->topicUser = $user;
     }
 
     // Getters
@@ -29,11 +29,11 @@ class Topic {
     }
 
     public function getCategory(): Category {
-        return $this->category;
+        return $this->topicCategory;
     }
 
     public function getUser(): User {
-        return $this->user;
+        return $this->topicUser;
     }
 
     // Setters
@@ -50,10 +50,10 @@ class Topic {
     }
 
     public function setCategory(Category $category): void {
-        $this->category = $category;
+        $this->topicCategory = $category;
     }
 
     public function setUser(User $user): void {
-        $this->user = $user;
+        $this->topicUser = $user;
     }
 }
