@@ -1,5 +1,9 @@
 <?php
 
+require_once '../data/interface/categoryDAOInterface.php';
+require_once '../model/category.php';
+
+
 class CategoryDAO implements CategoryDAOInterface {
     private $pdo;
 

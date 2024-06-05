@@ -1,4 +1,14 @@
 <?php
+require_once '../data/interface/messageDAOInterface.php';
+require_once '../model/message.php';
+
+require_once 'userDAO.php';
+require_once '../model/user.php';
+
+require_once 'conversationDAO.php';
+require_once '../model/conversation.php';
+
+
 class MessageDAO implements MessageDAOInterface {
     private $pdo;
 

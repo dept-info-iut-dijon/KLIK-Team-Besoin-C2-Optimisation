@@ -1,5 +1,10 @@
 <?php
 
+require_once '../data/interface/pollOptionInterface.php';
+require_once '../model/pollOption.php';
+
+require_once 'pollDAO.php';
+require_once '../model/poll.php';
 
 class PollOptionDAO implements PollOptionDAOInterface {
     private $pdo;

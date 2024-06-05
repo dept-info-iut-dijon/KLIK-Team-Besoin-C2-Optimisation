@@ -1,4 +1,9 @@
 <?php
+require_once '../data/interface/eventDAOInterface.php';
+require_once '../model/event.php';
+
+require_once 'userDAO.php';
+require_once '../model/user.php';
 
 
 class EventDAO implements EventDAOInterface {

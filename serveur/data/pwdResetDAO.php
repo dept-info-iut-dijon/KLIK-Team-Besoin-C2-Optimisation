@@ -1,5 +1,8 @@
 <?php
 
+require_once '../data/interface/pwdResetDAOInterface.php';
+require_once '../model/pwdReset.php';
+
 class PwdResetDAO implements PwdResetDAOInterface {
     private $pdo;
 

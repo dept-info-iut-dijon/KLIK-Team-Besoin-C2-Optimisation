@@ -1,5 +1,13 @@
 <?php
 
+require_once '../data/interface/postDAOInterface.php';
+require_once '../model/post.php';
+
+require_once 'userDAO.php';
+require_once '../model/user.php';
+
+require_once 'topicDAO.php';
+require_once '../model/topic.php';
 class PostDAO implements PostDAOInterface {
     private $pdo;
 

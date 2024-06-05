@@ -1,5 +1,7 @@
 <?php
 
+require_once '../data/interface/userDAOInterface.php';
+require_once '../model/user.php';
 
 class UserDAO implements UserDAOInterface {
     private $pdo;

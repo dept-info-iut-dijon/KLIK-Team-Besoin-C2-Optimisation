@@ -1,6 +1,13 @@
 <?php
 
+require_once '../data/interface/topicDAOInterface.php';
+require_once '../model/topic.php';
 
+require_once 'categoryDAO.php';
+require_once '../model/category.php';
+
+require_once 'userDAO.php';
+require_once '../model/user.php';
 
 class TopicDAO implements TopicDAOInterface {
     private $pdo;

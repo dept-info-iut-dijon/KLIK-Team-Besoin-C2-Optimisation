@@ -1,5 +1,8 @@
 <?php
 
+require_once '../data/interface/conversationDAOInterface.php';
+require_once '../model/conversation.php';
+
 class ConversationDAO implements ConversationDAOInterface {
     private $pdo;
 

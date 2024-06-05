@@ -1,4 +1,12 @@
 <?php
+require_once '../data/interface/blogVoteDAOInterface.php';
+require_once '../model/blogVote.php*';
+
+require_once 'userDAO.php';
+require_once '../model/user.php';
+
+require_once 'blogDAO.php';
+require_once '../model/blog.php';
 
 class BlogVoteDAO implements BlogVoteDAOInterface {
     private $pdo;
