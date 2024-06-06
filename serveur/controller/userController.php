@@ -47,7 +47,7 @@ class UserController
     {
         $user = $this->userManager->getUserById($userId);
         if ($user) {
-            echo json_encode($user);
+            echo json_encode($user->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'User not found']);
         }
@@ -66,7 +66,7 @@ class UserController
                     $userArray['userLastName'],
                     $userArray['username'],
                     $userArray['userEmail'],
-                    $userArray['userPassword'],
+                    $userArray['userPasswordHash'],
                     $userArray['userGender'],
                     $userArray['userHeadline'],
                     $userArray['userBio'],
