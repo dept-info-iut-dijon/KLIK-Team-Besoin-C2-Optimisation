@@ -1,5 +1,8 @@
 <?php
 
+require_once 'user.php';
+require_once 'topic.php';
+
 class Post {
     private int $postId;
     private string $postContent;
@@ -55,5 +58,15 @@ class Post {
 
     public function setUser(User $user): void {
         $this->user = $user;
+    }
+
+    public function toArray(): array {
+        return [
+            'postId' => $this->postId,
+            'postContent' => $this->postContent,
+            'postDate' => $this->postDate->format('Y-m-d H:i:s'),
+            'topic' => $this->topic->toArray(),
+            'user' => $this->user->toArray()
+        ];
     }
 }

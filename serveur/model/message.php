@@ -1,4 +1,7 @@
 <?php
+
+require_once 'user.php';
+require_once 'conversation.php';
 class Message {
     private int $messageId;
     private string $messageContent;
@@ -54,5 +57,15 @@ class Message {
 
     public function setUser(User $user): void {
         $this->user = $user;
+    }
+
+    public function toArray(): array {
+        return [
+            'messageId' => $this->messageId,
+            'messageContent' => $this->messageContent,
+            'messageDate' => $this->messageDate->format('Y-m-d H:i:s'),
+            'conversation' => $this->conversation->toArray(), 
+            'user' => $this->user->toArray() 
+        ];
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+require_once 'user.php';
+require_once 'blog.php';
+
 class BlogVote {
     private int $blogVoteId;
     private DateTime $blogVoteDate;
@@ -55,5 +58,15 @@ class BlogVote {
 
     public function setBlog(Blog $blog): void {
         $this->blog = $blog;
+    }
+
+    public function toArray(): array {
+        return [
+            'blogVoteId' => $this->blogVoteId,
+            'blogVoteDate' => $this->blogVoteDate->format('Y-m-d H:i:s'),
+            'blogVote' => $this->blogVote,
+            'user' => $this->user->toArray(),
+            'blog' => $this->blog->toArray()  
+        ];
     }
 }

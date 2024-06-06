@@ -1,5 +1,7 @@
 <?php
 
+require_once 'poll.php';
+
 class PollOption {
     private int $pollOptionId;
     private string $pollOptionName;
@@ -45,5 +47,14 @@ class PollOption {
 
     public function setPoll(Poll $poll): void {
         $this->poll = $poll;
+    }
+
+    public function toArray(): array {
+        return [
+            'pollOptionId' => $this->pollOptionId,
+            'pollOptionName' => $this->pollOptionName,
+            'pollOptionStatus' => $this->pollOptionStatus,
+            'poll' => $this->poll->toArray() 
+        ];
     }
 }

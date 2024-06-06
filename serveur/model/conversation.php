@@ -26,4 +26,11 @@ class Conversation {
     public function setConversationDateCreation(DateTime $conversationDateCreation): void {
         $this->conversationDateCreation = $conversationDateCreation;
     }
+
+    public function toArray(): array {
+        return [
+            'conversationId' => $this->conversationId,
+            'conversationDateCreation' => $this->conversationDateCreation->format('Y-m-d H:i:s'), // Formatage de la date en chaîne de caractères
+        ];
+    }
 }

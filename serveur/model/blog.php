@@ -1,5 +1,7 @@
 <?php
 
+require_once 'user.php';
+
 class Blog {
     private int $blogId;
     private string $blogTitle;
@@ -65,5 +67,16 @@ class Blog {
 
     public function setUser(User $user): void {
         $this->user = $user;
+    }
+
+    public function toArray(): array {
+        return [
+            'blogId' => $this->blogId,
+            'blogTitle' => $this->blogTitle,
+            'blogImg' => $this->blogImg,
+            'blogDate' => $this->blogDate->format('Y-m-d H:i:s'), 
+            'blogContent' => $this->blogContent,
+            'user' => $this->user->toArray() 
+        ];
     }
 }

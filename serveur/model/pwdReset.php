@@ -56,4 +56,14 @@ class PwdReset {
     public function setResetExpires(string $resetExpires): void {
         $this->resetExpires = $resetExpires;
     }
+
+    public function toArray(): array {
+        return [
+            'resetId' => $this->resetId,
+            'resetEmail' => $this->resetEmail,
+            'resetSelector' => $this->resetSelector,
+            'resetToken' => $this->resetToken,
+            'resetExpires' => $this->resetExpires
+        ];
+    }
 }

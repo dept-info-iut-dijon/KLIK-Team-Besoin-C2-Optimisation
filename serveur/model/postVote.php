@@ -1,5 +1,8 @@
 <?php
 
+require_once 'user.php';
+require_once 'post.php';
+
 class PostVote {
     private int $postVoteId;
     private DateTime $postVoteDate;
@@ -55,5 +58,15 @@ class PostVote {
 
     public function setUser(User $user): void {
         $this->user = $user;
+    }
+
+    public function toArray(): array {
+        return [
+            'postVoteId' => $this->postVoteId,
+            'postVoteDate' => $this->postVoteDate->format('Y-m-d H:i:s'),
+            'postVote' => $this->postVote,
+            'post' => $this->post->toArray(),
+            'user' => $this->user->toArray()
+        ];
     }
 }

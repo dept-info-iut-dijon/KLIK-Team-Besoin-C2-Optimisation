@@ -1,5 +1,7 @@
 <?php
 
+require_once 'user.php';
+
 class Event {
     private int $eventId;
     private string $eventTitle;
@@ -85,5 +87,18 @@ class Event {
 
     public function setUser(User $user): void {
         $this->user = $user;
+    }
+
+    public function toArray(): array {
+        return [
+            'eventId' => $this->eventId,
+            'eventTitle' => $this->eventTitle,
+            'eventDateCreated' => $this->eventDateCreated->format('Y-m-d H:i:s'), // Formatage de la date en chaîne de caractères
+            'eventDate' => $this->eventDate->format('Y-m-d H:i:s'), // Formatage de la date en chaîne de caractères
+            'eventImg' => $this->eventImg,
+            'eventHeadline' => $this->eventHeadline,
+            'eventDescription' => $this->eventDescription,
+            'user' => $this->user->toArray() // Appel de la méthode toArray de l'objet complexe User
+        ];
     }
 }

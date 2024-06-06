@@ -1,5 +1,7 @@
 <?php
 
+require_once 'user.php';
+
 class Poll {
     private int $pollId;
     private string $pollSubject;
@@ -85,5 +87,18 @@ class Poll {
 
     public function setUser(User $user): void {
         $this->user = $user;
+    }
+
+    public function toArray(): array {
+        return [
+            'pollId' => $this->pollId,
+            'pollSubject' => $this->pollSubject,
+            'pollCreated' => $this->pollCreated->format('Y-m-d H:i:s'),
+            'pollModified' => $this->pollModified->format('Y-m-d H:i:s'),
+            'pollStatus' => $this->pollStatus,
+            'pollDescription' => $this->pollDescription,
+            'pollLocked' => $this->pollLocked,
+            'user' => $this->user->toArray() 
+        ];
     }
 }

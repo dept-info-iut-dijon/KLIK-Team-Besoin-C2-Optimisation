@@ -1,5 +1,8 @@
 <?php
 
+require_once 'category.php';
+require_once 'user.php';
+
 class Topic {
     private int $topicId;
     private string $topicSubject;

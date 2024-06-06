@@ -1,5 +1,8 @@
 <?php
 
+require_once 'user.php';
+require_once 'pollOption.php';
+
 class PollVote {
     private int $pollVoteId;
     private User $user;
@@ -35,5 +38,13 @@ class PollVote {
 
     public function setPollOption(PollOption $pollOption): void {
         $this->pollOption = $pollOption;
+    }
+
+    public function toArray(): array {
+        return [
+            'pollVoteId' => $this->pollVoteId,
+            'user' => $this->user->toArray(),
+            'pollOption' => $this->pollOption->toArray()
+        ];
     }
 }
