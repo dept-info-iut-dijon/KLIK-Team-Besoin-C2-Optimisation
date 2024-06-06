@@ -38,7 +38,7 @@ class PollVoteController {
     public function getPollVoteById($pollVoteId) {
         $pollVote = $this->pollVoteManager->getPollVoteById($pollVoteId);
         if ($pollVote) {
-            echo json_encode($pollVote);
+            echo json_encode($pollVote->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Poll vote not found']);
         }
@@ -57,7 +57,11 @@ class PollVoteController {
 
     public function getAllPollVotes() {
         $pollVotes = $this->pollVoteManager->getAllPollVotes();
-        echo json_encode($pollVotes);
+        $pollVotesArray = [];
+        foreach ($pollVotes as $pollVote) {
+            $pollVotesArray[] = $pollVote->toArray();
+        }
+        echo json_encode($pollVotesArray);
     }
 }
 

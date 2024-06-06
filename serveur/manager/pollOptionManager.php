@@ -1,5 +1,5 @@
 <?php
-require_once '/../data/pollOptionDAO.php'; 
+require_once '../data/pollOptionDAO.php'; 
 require_once '../model/pollOption.php';
 
 class PollOptionManager
