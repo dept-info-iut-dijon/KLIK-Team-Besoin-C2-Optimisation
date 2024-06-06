@@ -24,13 +24,12 @@ class UserController
                     $userArray['userLastName'],
                     $userArray['username'],
                     $userArray['userEmail'],
-                    $userArray['userPassword'],
+                    $userArray['userPasswordHash'],
                     $userArray['userGender'],
                     $userArray['userHeadline'],
                     $userArray['userBio'],
                     $userArray['userImage']
                 );
-
                 $result = $this->userManager->createUser($user);
 
                 if ($result) {
