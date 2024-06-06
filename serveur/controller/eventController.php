@@ -42,7 +42,7 @@ class EventController {
     public function getEventById($eventId) {
         $event = $this->eventManager->getEventById($eventId);
         if ($event) {
-            echo json_encode($event);
+            echo json_encode($event->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Event not found']);
         }
@@ -89,7 +89,11 @@ class EventController {
 
     public function getAllEvents() {
         $events = $this->eventManager->getAllEvents();
-        echo json_encode($events);
+        $eventsArray = [];
+        foreach ($events as $event) {
+            $eventsArray[] = $event;
+        }
+        echo json_encode($eventsArray);
     }
 }
 

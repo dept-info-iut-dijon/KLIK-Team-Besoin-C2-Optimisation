@@ -40,7 +40,7 @@ class BlogVoteController {
     public function getBlogVoteById($blogVoteId) {
         $blogVote = $this->blogVoteManager->getBlogVoteById($blogVoteId);
         if ($blogVote) {
-            echo json_encode($blogVote);
+            echo json_encode($blogVote->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Blog vote not found']);
         }
@@ -84,6 +84,10 @@ class BlogVoteController {
 
     public function getAllBlogVotes() {
         $blogVotes = $this->blogVoteManager->getAllBlogVotes();
+        $blogVote = [];
+        foreach ($blogVotes as $blogVote) {
+            $blogVote[] = $blogVote->toArray();
+        }
         echo json_encode($blogVotes);
     }
 }

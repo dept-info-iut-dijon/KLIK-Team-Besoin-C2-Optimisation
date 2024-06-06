@@ -35,7 +35,7 @@ class ConversationController {
     public function getConversationById($conversationId) {
         $conversation = $this->conversationManager->getConversationById($conversationId);
         if ($conversation) {
-            echo json_encode($conversation);
+            echo json_encode($conversation->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Conversation not found']);
         }
@@ -76,7 +76,11 @@ class ConversationController {
 
     public function getAllConversations() {
         $conversations = $this->conversationManager->getAllConversations();
-        echo json_encode($conversations);
+        $conversationsArray = [];
+        foreach ($conversations as $conversation) {
+            $conversationsArray[] = $conversation->toArray();
+        }
+        echo json_encode($conversationsArray);
     }
 }
 
