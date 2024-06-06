@@ -8,7 +8,7 @@ class PostVoteController {
     private PostVoteManager $postVoteManager;
 
     public function __construct() {
-        $this->postVoteManager = new PostVoteManager(new PostVoteDAO());
+        $this->postVoteManager = new PostVoteManager();
     }
 
     public function createPostVote() {
@@ -17,7 +17,7 @@ class PostVoteController {
             if ($data && isset($data['postVote'])) {
                 $postVoteArray = $data['postVote'];
                 $postVote = new PostVote(
-                    0, // Assuming 0 for new PostVote ID
+                    0, 
                     new DateTime($postVoteArray['postVoteDate']),
                     $postVoteArray['postVote'],
                     (new PostDAO())->read($postVoteArray['postId']),

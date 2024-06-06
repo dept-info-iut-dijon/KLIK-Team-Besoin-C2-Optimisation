@@ -8,7 +8,7 @@ class TopicController {
     private TopicManager $topicManager;
 
     public function __construct() {
-        $this->topicManager = new TopicManager(new TopicDAO());
+        $this->topicManager = new TopicManager();
     }
 
     public function createTopic() {
