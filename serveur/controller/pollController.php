@@ -42,7 +42,7 @@ class PollController {
     public function getPollById($pollId) {
         $poll = $this->pollManager->getPollById($pollId);
         if ($poll) {
-            echo json_encode($poll);
+            echo json_encode($poll->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Poll not found']);
         }
@@ -89,7 +89,11 @@ class PollController {
 
     public function getAllPolls() {
         $polls = $this->pollManager->getAllPolls();
-        echo json_encode($polls);
+        $pollArray = [];
+        foreach ($polls as $poll) {
+            $pollArray[] = $poll->toArray();
+        }
+        echo json_encode($pollArray);
     }
 }
 

@@ -40,7 +40,7 @@ class MessageController {
     public function getMessageById($messageId) {
         $message = $this->messageManager->getMessageById($messageId);
         if ($message) {
-            echo json_encode($message);
+            echo json_encode($message->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Message not found']);
         }
@@ -84,7 +84,11 @@ class MessageController {
 
     public function getAllMessages() {
         $messages = $this->messageManager->getAllMessages();
-        echo json_encode($messages);
+        $resultArray = [];
+        foreach ($messages as $message) {
+            $resultArray[] = $message;
+        }
+        echo json_encode($resultArray);
     }
 }
 
