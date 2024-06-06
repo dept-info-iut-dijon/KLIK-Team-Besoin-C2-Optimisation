@@ -60,14 +60,13 @@ class Topic {
         $this->topicUser = $user;
     }
 
-        // Ajouter la méthode toArray pour convertir l'objet en tableau associatif
-        public function toArray(): array {
-            return [
-                'topicId' => $this->topicId,
-                'subject' => $this->topicSubject,
-                'date' => $this->topicDate->format('Y-m-d H:i:s'), // Formatage de la date
-                'category' => $this->topicCategory->toArray(), // Appel de toArray sur l'objet Category
-                'user' => $this->topicUser->toArray() // Appel de toArray sur l'objet User
-            ];
-        }
+    public function toArray(): array {
+        return [
+            'topicId' => $this->topicId,
+            'subject' => $this->topicSubject,
+            'date' => $this->topicDate->format('Y-m-d H:i:s'), // Formatage de la date
+            'category' => $this->topicCategory->toArray(), // Appel de toArray sur l'objet Category
+            'user' => $this->topicUser->toArray() // Appel de toArray sur l'objet User
+        ];
+    }
 }
