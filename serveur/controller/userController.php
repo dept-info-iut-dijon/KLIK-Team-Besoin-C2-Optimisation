@@ -101,7 +101,11 @@ class UserController
     public function getAllUsers()
     {
         $users = $this->userManager->getAllUsers();
-        echo json_encode($users);
+        $userArray = [];
+        foreach ($users as $user) {
+            $userArray[] = $user->toArray();
+        }
+        echo json_encode($userArray);
     }
 }
 

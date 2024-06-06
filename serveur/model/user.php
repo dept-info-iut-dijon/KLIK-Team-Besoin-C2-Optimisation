@@ -116,4 +116,21 @@ class User {
     public function setUserImage(string $userImage): void {
         $this->userImage = $userImage;
     }
+
+        // Ajouter la méthode toArray pour convertir l'objet en tableau associatif
+        public function toArray(): array {
+            return [
+                'userId' => $this->userId,
+                'userLevel' => $this->userLevel,
+                'userFirstName' => $this->userFirstName,
+                'userLastName' => $this->userLastName,
+                'username' => $this->username,
+                'userEmail' => $this->userEmail,
+                'userPasswordHash' => $this->userPassword,
+                'userGender' => $this->userGender,
+                'userHeadline' => $this->userHeadline,
+                'userBio' => $this->userBio,
+                'userImage' => $this->userImage
+            ];
+        }
 }

@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $db_name = "klik_databse";
+    private $db_name = "klik_database";
     private $username = "root";
     private $password = "";
     private static $instance = null;
