@@ -40,7 +40,7 @@ class BlogController {
     public function getBlogById($blogId) {
         $blog = $this->blogManager->getBlogById($blogId);
         if ($blog) {
-            echo json_encode($blog);
+            echo json_encode($blog->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Blog not found']);
         }
@@ -85,7 +85,11 @@ class BlogController {
 
     public function getAllBlogs() {
         $blogs = $this->blogManager->getAllBlogs();
-        echo json_encode($blogs);
+        $blogArray = [];
+        foreach ($blogs as $blog) {
+            $blogArray[] = $blog->toArray();
+        }
+        echo(json_encode($blogArray));
     }
 }
 
