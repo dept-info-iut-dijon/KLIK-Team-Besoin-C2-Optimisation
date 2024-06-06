@@ -38,7 +38,7 @@ class PollOptionController {
     public function getPollOptionById($pollOptionId) {
         $pollOption = $this->pollOptionManager->getPollOptionById($pollOptionId);
         if ($pollOption) {
-            echo json_encode($pollOption);
+            echo json_encode($pollOption->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Poll option not found']);
         }
@@ -81,7 +81,11 @@ class PollOptionController {
 
     public function getAllPollOptions() {
         $pollOptions = $this->pollOptionManager->getAllPollOptions();
-        echo json_encode($pollOptions);
+        $pollOptionsArray = [];
+        foreach ($pollOptions as $pollOption) {
+            $pollOptionsArray[] = $pollOption->toArray();
+        }
+        echo json_encode($pollOptionsArray);
     }
 }
 
