@@ -2,7 +2,7 @@
 
 require_once '../data/interface/userDAOInterface.php';
 require_once '../model/user.php';
-
+require_once '../database.php';
 class UserDAO implements UserDAOInterface {
     private $pdo;
 
@@ -80,7 +80,7 @@ class UserDAO implements UserDAOInterface {
         $stmt = $this->pdo->query($sql);
         $users = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $users[] = new User(
+            $user = new User(
                 $row['user_id'],
                 $row['user_level'],
                 $row['user_first_name'],
@@ -93,7 +93,11 @@ class UserDAO implements UserDAOInterface {
                 $row['user_bio'],
                 $row['user_img']
             );
+            $users[] = $user;
+
         }
+
+
         return $users;
     }
 }
