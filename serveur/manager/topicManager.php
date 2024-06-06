@@ -1,6 +1,6 @@
 <?php
 require_once '../data/topicDAO.php'; 
-require_once '../model/topic.php.php';
+require_once '../model/topic.php';
 
 class TopicManager
 {

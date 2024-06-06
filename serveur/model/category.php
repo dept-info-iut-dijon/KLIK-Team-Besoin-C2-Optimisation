@@ -36,4 +36,13 @@ class Category {
     public function setCatDescription(string $catDescription): void {
         $this->catDescription = $catDescription;
     }
+
+        // Ajouter la méthode toArray pour convertir l'objet en tableau associatif
+        public function toArray(): array {
+            return [
+                'catId' => $this->catId,
+                'catName' => $this->catName,
+                'catDescription' => $this->catDescription
+            ];
+        }
 }

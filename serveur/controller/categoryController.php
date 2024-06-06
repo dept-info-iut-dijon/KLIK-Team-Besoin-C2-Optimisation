@@ -36,7 +36,7 @@ class CategoryController {
     public function getCategoryById($catId) {
         $category = $this->categoryManager->getCategoryById($catId);
         if ($category) {
-            echo json_encode($category);
+            echo json_encode($category->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Category not found']);
         }
@@ -78,7 +78,11 @@ class CategoryController {
 
     public function getAllCategories() {
         $categories = $this->categoryManager->getAllCategories();
-        echo json_encode($categories);
+        $categoryArray = [];
+        foreach ($categories as $category) {
+            $categoryArray[] = $category->toArray();
+        }
+        echo json_encode($categoryArray);
     }
 }
 
