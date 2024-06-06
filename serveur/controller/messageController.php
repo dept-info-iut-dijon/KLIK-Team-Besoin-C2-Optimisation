@@ -86,7 +86,7 @@ class MessageController {
         $messages = $this->messageManager->getAllMessages();
         $resultArray = [];
         foreach ($messages as $message) {
-            $resultArray[] = $message;
+            $resultArray[] = $message->toArray();
         }
         echo json_encode($resultArray);
     }
