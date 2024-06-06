@@ -40,7 +40,7 @@ class PostController {
     public function getPostById($postId) {
         $post = $this->postManager->getPostById($postId);
         if ($post) {
-            echo json_encode($post);
+            echo json_encode($post->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Post not found']);
         }
@@ -83,8 +83,13 @@ class PostController {
     }
 
     public function getAllPosts() {
+        
         $posts = $this->postManager->getAllPosts();
-        echo json_encode($posts);
+        $postArray = [];
+        foreach ($posts as $post) {
+            $postArray[] = $post->toArray();
+        }
+        echo json_encode($postArray);
     }
 }
 

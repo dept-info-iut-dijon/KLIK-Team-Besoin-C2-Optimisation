@@ -40,7 +40,7 @@ class PostVoteController {
     public function getPostVoteById($postVoteId) {
         $postVote = $this->postVoteManager->getPostVoteById($postVoteId);
         if ($postVote) {
-            echo json_encode($postVote);
+            echo json_encode($postVote->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Post vote not found']);
         }
@@ -84,7 +84,11 @@ class PostVoteController {
 
     public function getAllPostVotes() {
         $postVotes = $this->postVoteManager->getAllPostVotes();
-        echo json_encode($postVotes);
+        $postVotesArray = [];
+        foreach ($postVotes as $postVote) {
+            $postVotesArray[] = $postVote->toArray();
+        }
+        echo json_encode($postVotesArray);
     }
 }
 

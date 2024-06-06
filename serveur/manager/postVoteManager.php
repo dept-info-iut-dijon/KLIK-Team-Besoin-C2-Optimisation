@@ -1,6 +1,6 @@
 <?php
 require_once '../data/postVoteDAO.php';
-require_once '../model/postVote.php.php';
+require_once '../model/postVote.php';
 
 class PostVoteManager
 {
