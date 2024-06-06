@@ -7,7 +7,7 @@ class BlogController {
     private BlogManager $blogManager;
 
     public function __construct() {
-        $this->blogManager = new BlogManager(new BlogDAO());
+        $this->blogManager = new BlogManager();
     }
 
     public function createBlog() {

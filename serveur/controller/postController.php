@@ -8,7 +8,7 @@ class PostController {
     private PostManager $postManager;
 
     public function __construct() {
-        $this->postManager = new PostManager(new PostDAO());
+        $this->postManager = new PostManager();
     }
 
     public function createPost() {
@@ -17,7 +17,7 @@ class PostController {
             if ($data && isset($data['post'])) {
                 $postArray = $data['post'];
                 $post = new Post(
-                    0, // Assuming 0 for new Post ID
+                    0, 
                     $postArray['postContent'],
                     new DateTime($postArray['postDate']),
                     (new TopicDAO())->read($postArray['topicId']),

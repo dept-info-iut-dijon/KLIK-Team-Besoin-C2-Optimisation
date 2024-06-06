@@ -7,7 +7,7 @@ class EventController {
     private EventManager $eventManager;
 
     public function __construct() {
-        $this->eventManager = new EventManager(new EventDAO());
+        $this->eventManager = new EventManager();
     }
 
     public function createEvent() {
@@ -16,7 +16,7 @@ class EventController {
             if ($data && isset($data['event'])) {
                 $eventArray = $data['event'];
                 $event = new Event(
-                    0, // Assuming 0 for new Event ID
+                    0, 
                     $eventArray['eventTitle'],
                     new DateTime($eventArray['eventDateCreated']),
                     new DateTime($eventArray['eventDate']),
