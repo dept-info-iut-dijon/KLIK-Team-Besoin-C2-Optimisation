@@ -40,7 +40,7 @@ class TopicController {
     public function getTopicById($topicId) {
         $topic = $this->topicManager->getTopicById($topicId);
         if ($topic) {
-            echo json_encode($topic);
+            echo json_encode($topic->toArray());
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Topic not found']);
         }
@@ -84,7 +84,11 @@ class TopicController {
 
     public function getAllTopics() {
         $topics = $this->topicManager->getAllTopics();
-        echo json_encode($topics);
+        $topicArray = [];
+        foreach ($topics as $topic) {
+            $topicArray[] = $topic->toArray();
+        }
+        echo json_encode($topicArray);
     }
 }
 
