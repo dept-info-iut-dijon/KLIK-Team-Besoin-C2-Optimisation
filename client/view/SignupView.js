@@ -46,7 +46,7 @@ export class SignupView {
         }
         else {
             const formData = new FormData();
-            formData.append("useImage", file ? file : "");
+            formData.append("userImage", file ? file : "");
             formData.append("user", JSON.stringify(user));
             this.authController.Signup(formData).then(res => {
                 if (!res) {
