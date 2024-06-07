@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Category = void 0;
-class Category {
+export class Category {
     get CatId() {
         return this.catId;
     }
@@ -26,4 +23,3 @@ class Category {
         this.catDescription = "";
     }
 }
-exports.Category = Category;

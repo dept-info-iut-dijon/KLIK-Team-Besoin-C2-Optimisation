@@ -18,7 +18,7 @@ img {
 /* cover */
 
 #cover {
-    background: #222 url('img/stars.jpg') center center no-repeat;
+    background: #222 url('../src/img/stars.jpg') center center no-repeat;
     background-size: cover;
     color: white;
     height: 100%;
@@ -36,7 +36,7 @@ img {
 }
 
 #about {
-    background: url('img/girlincar.jpg') center center no-repeat;
+    background: url('../src/img/girlincar.jpg') center center no-repeat;
     background-size: cover;
 }
 

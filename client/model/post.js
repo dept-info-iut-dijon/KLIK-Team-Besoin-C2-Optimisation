@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
-const topic_1 = require("./topic");
-const user_1 = require("./user");
-class Post {
+import { Topic } from "./topic";
+import { User } from "./user";
+export class Post {
     get PostId() {
         return this.postId;
     }
@@ -44,9 +41,8 @@ class Post {
         this.postId = 0;
         this.postContent = "";
         this.postDate = new Date();
-        this.postTopic = new topic_1.Topic();
+        this.postTopic = new Topic();
         this.postVotes = new Array();
-        this.postUser = new user_1.User();
+        this.postUser = new User();
     }
 }
-exports.Post = Post;

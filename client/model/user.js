@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
-class User {
+export class User {
     get UserId() {
         return this.userId;
     }
@@ -82,4 +79,3 @@ class User {
         this.userImage = "";
     }
 }
-exports.User = User;

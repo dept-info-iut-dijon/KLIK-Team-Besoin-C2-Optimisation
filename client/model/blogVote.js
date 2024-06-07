@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BlogVote = void 0;
-const user_1 = require("./user");
-class BlogVote {
+import { User } from "./user";
+export class BlogVote {
     constructor() {
         this.blogVoteId = 0;
         this.blogVoteDate = new Date();
         this.blogVote = 0;
-        this.blogVoteUser = new user_1.User();
+        this.blogVoteUser = new User();
     }
     get BlogVoteId() {
         return this.blogVoteId;
@@ -34,4 +31,3 @@ class BlogVote {
         this.blogVoteUser = value;
     }
 }
-exports.BlogVote = BlogVote;

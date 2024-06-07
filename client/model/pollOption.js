@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PollOption = void 0;
 /**
  * Represents a poll option
  */
-class PollOption {
+export class PollOption {
     constructor() {
         this.pollOptionId = 0;
         this.pollOptionName = "";
@@ -36,4 +33,3 @@ class PollOption {
         this.pollVotes = value;
     }
 }
-exports.PollOption = PollOption;

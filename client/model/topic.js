@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Topic = void 0;
-const category_1 = require("./category");
-const user_1 = require("./user");
-class Topic {
+import { Category } from "./category";
+import { User } from "./user";
+export class Topic {
     get TopicId() {
         return this.topicId;
     }
@@ -38,8 +35,7 @@ class Topic {
         this.topicId = 0;
         this.topicSubject = "";
         this.topicDate = new Date();
-        this.topicCategory = new category_1.Category();
-        this.topicUser = new user_1.User();
+        this.topicCategory = new Category();
+        this.topicUser = new User();
     }
 }
-exports.Topic = Topic;

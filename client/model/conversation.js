@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const user_1 = require("./user");
+import { User } from "./user";
 class Conversation {
     get Messages() {
         return this.messages;
@@ -34,8 +32,8 @@ class Conversation {
     }
     constructor() {
         this.messages = new Array;
-        this.user1 = new user_1.User();
-        this.user2 = new user_1.User();
+        this.user1 = new User();
+        this.user2 = new User();
         this.conversationId = 0;
         this.conversationDateCreation = new Date();
     }

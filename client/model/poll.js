@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Poll = void 0;
-const user_js_1 = require("./user.js");
+import { User } from "./user.js";
 /**
  * Represents a poll
  */
-class Poll {
+export class Poll {
     constructor() {
         this.pollId = 0;
         this.pollSubject = "";
@@ -15,7 +12,7 @@ class Poll {
         this.pollDesc = "";
         this.pollLocked = false;
         this.pollOptions = new Array();
-        this.pollUser = new user_js_1.User();
+        this.pollUser = new User();
     }
     get PollId() {
         return this.pollId;
@@ -72,4 +69,3 @@ class Poll {
         this.pollUser = value;
     }
 }
-exports.Poll = Poll;
