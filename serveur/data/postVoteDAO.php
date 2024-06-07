@@ -22,7 +22,7 @@ class PostVoteDAO implements PostVoteDAOInterface {
         return $stmt->execute([
             $postVote->getPostVoteDate()->format('Y-m-d'),
             $postVote->getPostVote(),
-            $postVote->getPost()->getPostId(),
+            $postVote->getPostId(),
             $postVote->getUser()->getUserId()
         ]);
     }
@@ -34,15 +34,13 @@ class PostVoteDAO implements PostVoteDAOInterface {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
-            $postDAO = new PostDAO();
             $userDAO = new UserDAO();
-            $post = $postDAO->read($row['post_id']);
             $user = $userDAO->read($row['user_id']);
             return new PostVote(
                 $row['post_Vote_id'],
                 new DateTime($row['post_Vote_date']),
                 $row['post_Vote'],
-                $post,
+                $row['post_id'],
                 $user
             );
         }
@@ -55,7 +53,7 @@ class PostVoteDAO implements PostVoteDAOInterface {
         return $stmt->execute([
             $postVote->getPostVoteDate()->format('Y-m-d'),
             $postVote->getPostVote(),
-            $postVote->getPost()->getPostId(),
+            $postVote->getPostId(),
             $postVote->getUser()->getUserId(),
             $postVote->getPostVoteId()
         ]);
@@ -74,13 +72,12 @@ class PostVoteDAO implements PostVoteDAOInterface {
         $postDAO = new PostDAO();
         $userDAO = new UserDAO();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $post = $postDAO->read($row['post_id']);
             $user = $userDAO->read($row['user_id']);
             $postVotes[] = new PostVote(
                 $row['post_Vote_id'],
                 new DateTime($row['post_Vote_date']),
                 $row['post_Vote'],
-                $post,
+                $row['post_id'],
                 $user
             );
         }

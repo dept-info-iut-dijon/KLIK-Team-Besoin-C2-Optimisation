@@ -7,14 +7,14 @@ class PostVote {
     private int $postVoteId;
     private DateTime $postVoteDate;
     private int $postVote;
-    private Post $post;
+    private int $postId;
     private User $user;
 
-    public function __construct(int $postVoteId, DateTime $postVoteDate, int $postVote, Post $post, User $user) {
+    public function __construct(int $postVoteId, DateTime $postVoteDate, int $postVote, int $postId, User $user) {
         $this->postVoteId = $postVoteId;
         $this->postVoteDate = $postVoteDate;
         $this->postVote = $postVote;
-        $this->post = $post;
+        $this->postId = $postId;
         $this->user = $user;
     }
 
@@ -31,8 +31,8 @@ class PostVote {
         return $this->postVote;
     }
 
-    public function getPost(): Post {
-        return $this->post;
+    public function getPostId(): int {
+        return $this->postId;
     }
 
     public function getUser(): User {
@@ -52,8 +52,8 @@ class PostVote {
         $this->postVote = $postVote;
     }
 
-    public function setPost(Post $post): void {
-        $this->post = $post;
+    public function setPostId(int $post): void {
+        $this->postId = $post;
     }
 
     public function setUser(User $user): void {
@@ -65,7 +65,7 @@ class PostVote {
             'postVoteId' => $this->postVoteId,
             'postVoteDate' => $this->postVoteDate->format('Y-m-d H:i:s'),
             'postVote' => $this->postVote,
-            'post' => $this->post->toArray(),
+            'postId' => $this->postId,
             'user' => $this->user->toArray()
         ];
     }

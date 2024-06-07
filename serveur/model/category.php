@@ -46,4 +46,12 @@ class Category {
                 'catDescription' => $this->catDescription
             ];
         }
+
+        public static function createFromObject(object $data): Category {
+            $catId = $data->catId;
+            $catName = $data->catName;
+            $catDescription = $data->catDescription;
+    
+            return new self($catId, $catName, $catDescription);
+        }
 }
