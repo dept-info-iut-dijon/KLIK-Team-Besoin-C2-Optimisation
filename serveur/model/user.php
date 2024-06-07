@@ -133,4 +133,20 @@ class User {
             'userImage' => $this->userImage
         ];
     }
+
+    public static function createFromObject(object $data): User {
+        $userId = $data->userId;
+        $userLevel = $data->userLevel;
+        $userFirstName = $data->userFirstName;
+        $userLastName = $data->userLastName;
+        $username = $data->username;
+        $userEmail = $data->userEmail;
+        $userPasswordHash = $data->userPasswordHash;
+        $userGender = $data->userGender;
+        $userHeadline = $data->userHeadline;
+        $userBio = $data->userBio;
+        $userImage = $data->userImage;
+
+        return new self($userId, $userLevel, $userFirstName, $userLastName, $username, $userEmail, $userPasswordHash, $userGender, $userHeadline, $userBio, $userImage);
+    }
 }

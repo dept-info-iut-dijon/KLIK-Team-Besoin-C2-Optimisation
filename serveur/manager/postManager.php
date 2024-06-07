@@ -35,4 +35,8 @@ class PostManager
     {
         return $this->postDAO->getAll();
     }
+
+    public function getPostVotes(int $postId): array{
+        return $this->postDAO->getPostVotes($postId);
+    }
 }

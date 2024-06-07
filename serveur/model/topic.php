@@ -69,4 +69,14 @@ class Topic {
             'user' => $this->topicUser->toArray() // Appel de toArray sur l'objet User
         ];
     }
+
+    public static function createFromObject(object $data): Topic {
+        $topicId = $data->topicId;
+        $topicSubject = $data->topicSubject;
+        $topicDate = new DateTime($data->topicDate);
+        $category = Category::createFromObject($data->category); // Assurez-vous que la classe Category a une méthode similaire
+        $user = User::createFromObject($data->user); // Assurez-vous que la classe User a une méthode similaire
+
+        return new self($topicId, $topicSubject, $topicDate, $category, $user);
+    }
 }

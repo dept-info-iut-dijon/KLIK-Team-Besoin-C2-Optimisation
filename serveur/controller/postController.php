@@ -16,13 +16,7 @@ class PostController {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['post'])) {
                 $postArray = $data['post'];
-                $post = new Post(
-                    0, 
-                    $postArray['postContent'],
-                    new DateTime($postArray['postDate']),
-                    (new TopicDAO())->read($postArray['topicId']),
-                    (new UserDAO())->read($postArray['userId'])
-                );
+                $post = Post::createFromObject($postArray);
 
                 $result = $this->postManager->createPost($post);
 
@@ -51,13 +45,8 @@ class PostController {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['post'])) {
                 $postArray = $data['post'];
-                $post = new Post(
-                    $postArray['postId'],
-                    $postArray['postContent'],
-                    new DateTime($postArray['postDate']),
-                    (new TopicDAO())->read($postArray['topicId']),
-                    (new UserDAO())->read($postArray['userId'])
-                );
+
+                $post = Post::createFromObject($postArray);
 
                 $result = $this->postManager->updatePost($post);
 
