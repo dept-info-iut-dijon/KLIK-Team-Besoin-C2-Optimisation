@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KliK - Login</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet"> 
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet"> 
+    <link href="css/footer.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.png" />
+    <script src="metier/login.js" type="module"></script>
+</head>
+<body>
+    <section id="cover">
+        <div id="cover-caption">
+            <div class="container">
+                <div class="col-sm-10 offset-sm-1">
+                    <img src='img/200.png' alt="Background Image"/>
+                    <h5 class="text-white">Spreading Ideas</h5>
+                    <br>
+                    <div id="errorField" role="alert"></div>
+
+                    <div class="form-inline justify-content-center">
+                        <div class="form-group">
+                            <label for="name" class="sr-only">Name</label>
+                            <input type="text" id="name" name="mailuid"
+                                   class="form-control form-control-lg mr-1" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="sr-only">Email</label>
+                            <input type="password" id="password" name="pwd"
+                                   class="form-control form-control-lg mr-1" placeholder="Password">
+                        </div>
+                        <input type="submit" class="btn btn-dark btn-lg mr-1" id="login-submit" name="login-submit" value="Login">
+                    </div>
+
+                    <br><a href="./signup.html" class="btn btn-light btn-lg mr-1">Signup</a>
+                    
+                    <br><br>
+                    <div class="position-absolute login-icons">
+                        <a href="./contact.html">
+                            <i class="fa fa-envelope fa-2x social-icon" aria-hidden="true"></i>
+                        </a>
+                        <a href="./contact.html">
+                            <i class="fa fa-github fa-2x social-icon" aria-hidden="true"></i>
+                        </a>
+                    </div>     
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js" ></script>
+</body>
+</html>
