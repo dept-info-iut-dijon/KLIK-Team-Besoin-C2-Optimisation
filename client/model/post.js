@@ -1,4 +1,5 @@
 import { Topic } from "./topic";
+import { PostVote } from "./postVote";
 import { User } from "./user";
 export class Post {
     get PostId() {
@@ -44,5 +45,15 @@ export class Post {
         this.postTopic = new Topic();
         this.postVotes = new Array();
         this.postUser = new User();
+    }
+    static createFromObject(obj) {
+        const post = new Post();
+        post.PostId = obj.postId || 0;
+        post.PostContent = obj.postContent || "";
+        post.PostDate = obj.postDate ? new Date(obj.postDate) : new Date();
+        post.PostTopic = obj.postTopic ? Topic.createFromObject(obj.postTopic) : new Topic();
+        post.PostVotes = obj.postVotes ? obj.postVotes.map((vote) => PostVote.createFromObject(vote)) : new Array();
+        post.PostUser = obj.postUser ? User.createFromObject(obj.postUser) : new User();
+        return post;
     }
 }

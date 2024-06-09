@@ -44,4 +44,13 @@ export class PostVote {
         this.postVote = 0;
         this.postVoteUser = new User();
     }
+
+    public static createFromObject(obj: any): PostVote {
+        const postVote = new PostVote();
+        postVote.PostVoteId = obj.postVoteId || 0;
+        postVote.PostVoteDate = obj.postVoteDate ? new Date(obj.postVoteDate) : new Date();
+        postVote.PostVote = obj.postVote || 0;
+        postVote.PostVoteUser = obj.postVoteUser ? User.createFromObject(obj.postVoteUser) : new User();
+        return postVote;
+    }
 }

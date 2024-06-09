@@ -1,3 +1,4 @@
+import { BlogVote } from "./blogVote.js";
 import { User } from "./user.js";
 /**
  * Represents a blog
@@ -53,5 +54,16 @@ export class Blog {
     }
     set BlogUser(value) {
         this.blogUser = value;
+    }
+    static createFromObject(obj) {
+        const blog = new Blog();
+        blog.BlogId = obj.blogId || 0;
+        blog.BlogTitle = obj.blogTitle || "";
+        blog.BlogImg = obj.blogImg || "";
+        blog.BlogDate = obj.blogDate ? new Date(obj.blogDate) : new Date();
+        blog.BlogContent = obj.blogContent || "";
+        blog.BlogVotes = obj.blogVotes ? obj.blogVotes.map((vote) => BlogVote.createFromObject(vote)) : new Array();
+        blog.BlogUser = obj.blogUser ? User.createFromObject(obj.blogUser) : new User();
+        return blog;
     }
 }

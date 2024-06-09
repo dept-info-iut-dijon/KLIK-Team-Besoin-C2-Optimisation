@@ -66,4 +66,15 @@ export class Post {
         this.postVotes = new Array<PostVote>();
         this.postUser = new User();
     }
+
+    public static createFromObject(obj: any): Post {
+        const post = new Post();
+        post.PostId = obj.postId || 0;
+        post.PostContent = obj.postContent || "";
+        post.PostDate = obj.postDate ? new Date(obj.postDate) : new Date();
+        post.PostTopic = obj.postTopic ? Topic.createFromObject(obj.postTopic) : new Topic();
+        post.PostVotes = obj.postVotes ? obj.postVotes.map((vote: any) => PostVote.createFromObject(vote)) : new Array<PostVote>();
+        post.PostUser = obj.postUser ? User.createFromObject(obj.postUser) : new User();
+        return post;
+    }
 }

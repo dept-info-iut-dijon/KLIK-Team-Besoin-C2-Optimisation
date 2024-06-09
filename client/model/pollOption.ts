@@ -44,4 +44,13 @@ export class PollOption{
     public set PollVotes(value: Array<PollVote>){
         this.pollVotes = value;
     }
+
+    public static createFromObject(obj: any): PollOption {
+        const pollOption = new PollOption();
+        pollOption.PollOptionId = obj.pollOptionId || 0;
+        pollOption.PollOptionName = obj.pollOptionName || "";
+        pollOption.PollOptionStatus = obj.pollOptionStatus || false;
+        pollOption.PollVotes = obj.pollVotes ? obj.pollVotes.map((vote: any) => PollVote.createFromObject(vote)) : new Array<PollVote>();
+        return pollOption;
+    }
 }

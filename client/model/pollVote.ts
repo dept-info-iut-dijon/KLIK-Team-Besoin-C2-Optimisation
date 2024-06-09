@@ -32,4 +32,12 @@ export class PollVote{
     public set PollVoteUser(value: User){
         this.pollVoteUser = value;
     }
+
+    public static createFromObject(obj: any): PollVote {
+        const pollVote = new PollVote();
+        pollVote.PollVoteId = obj.pollVoteId || 0;
+        pollVote.PollVoteDate = obj.pollVoteDate ? new Date(obj.pollVoteDate) : new Date();
+        pollVote.PollVoteUser = obj.pollVoteUser ? User.createFromObject(obj.pollVoteUser) : new User();
+        return pollVote;
+    }
 }

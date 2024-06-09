@@ -35,7 +35,13 @@ class Message {
     }
 
 
-
+    public static createFromObject(obj: any): Message {
+        const message = new Message();
+        message.MessageId = obj.messageId || 0;
+        message.MessageContent = obj.messageContent || "";
+        message.MessageDate = obj.messageDate ? new Date(obj.messageDate) : new Date();
+        return message;
+    }
 
 
 

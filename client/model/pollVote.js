@@ -23,4 +23,11 @@ export class PollVote {
     set PollVoteUser(value) {
         this.pollVoteUser = value;
     }
+    static createFromObject(obj) {
+        const pollVote = new PollVote();
+        pollVote.PollVoteId = obj.pollVoteId || 0;
+        pollVote.PollVoteDate = obj.pollVoteDate ? new Date(obj.pollVoteDate) : new Date();
+        pollVote.PollVoteUser = obj.pollVoteUser ? User.createFromObject(obj.pollVoteUser) : new User();
+        return pollVote;
+    }
 }
