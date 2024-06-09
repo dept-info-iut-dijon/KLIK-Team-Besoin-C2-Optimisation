@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Création d'un blog</title>
+    <link rel="stylesheet" href="css/createBlog.css">
+    <script href="/view/createBlog.js"></script>
+</head>
+<body>
+    <form method="post" id="blogForm">
+        <div>
+            <label for="blog_title"> Titre du Blog : </label>
+            <input type="text" id="blog_title" name="blog_title" required>
+        </div>
+
+        <div>
+            <label for="blog_img">Image du blog : </label>
+            <input type="file" id="blog_img" name="blog_img" accept="image/*" required>
+        </div>
+
+        <div>
+            <label for="blog_date">Date du blog :</label>
+            <input type="date" id="blog_date" name="blog_date" required>
+        </div>
+
+        <div>
+            <label for="blog_content">Contenu du blog :</label>
+            <textarea id="blog_content" minlength="50" rows="10" required></textarea>
+        </div>
+
+        <div>
+            <button type="submit">Créer</button>
+        </div>
+    </form>
+
+</body>
+</html>
