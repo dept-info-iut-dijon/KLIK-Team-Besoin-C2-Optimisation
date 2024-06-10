@@ -89,4 +89,18 @@ export class Poll{
     public set PollUser(value: User){
         this.pollUser = value;
     }
+
+    public static createFromObject(obj: any): Poll {
+        const poll = new Poll();
+        poll.PollId = obj.pollId || 0;
+        poll.PollSubject = obj.pollSubject || "";
+        poll.PollCreated = obj.pollCreated ? new Date(obj.pollCreated) : new Date();
+        poll.PollModified = obj.pollModified ? new Date(obj.pollModified) : new Date();
+        poll.PollStatus = obj.pollStatus || false;
+        poll.PollDesc = obj.pollDesc || "";
+        poll.PollLocked = obj.pollLocked || false;
+        poll.PollOptions = obj.pollOptions ? obj.pollOptions.map((option: any) => PollOption.createFromObject(option)) : new Array<PollOption>();
+        poll.PollUser = obj.pollUser ? User.createFromObject(obj.pollUser) : new User();
+        return poll;
+    }
 }

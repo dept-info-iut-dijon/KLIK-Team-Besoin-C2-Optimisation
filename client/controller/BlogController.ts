@@ -9,11 +9,15 @@ export default class BlogController implements IBlogController{
         this.blogNetwork = new BlogNetwork();
     }
 
-    createBlog(blog: Blog): Promise<boolean> {
+    async createBlog(blog: Blog): Promise<boolean> {
         return this.blogNetwork.createBlog(blog);
     }
 
     getAllBlogs(): Promise<Array<Blog>>{
         return this.blogNetwork.getAllBlogs();
     }
+    async updateBlog(blog : Blog) : Promise<boolean>{
+        return this.blogNetwork.updateBlog(blog);
+    }
+
 }

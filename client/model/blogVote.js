@@ -3,7 +3,7 @@ export class BlogVote {
     constructor() {
         this.blogVoteId = 0;
         this.blogVoteDate = new Date();
-        this.blogVote = 0;
+        this.blogVote = 1;
         this.blogVoteUser = new User();
     }
     static createFromObject(object) {
@@ -37,5 +37,13 @@ export class BlogVote {
     }
     set BlogVoteUser(value) {
         this.blogVoteUser = value;
+    }
+    static createFromObject(obj) {
+        const blogVote = new BlogVote();
+        blogVote.BlogVoteId = obj.blogVoteId || 0;
+        blogVote.BlogVoteDate = obj.blogVoteDate ? new Date(obj.blogVoteDate) : new Date();
+        blogVote.BlogVote = obj.blogVote || 1;
+        blogVote.BlogVoteUser = obj.blogVoteUser ? User.createFromObject(obj.blogVoteUser) : new User();
+        return blogVote;
     }
 }

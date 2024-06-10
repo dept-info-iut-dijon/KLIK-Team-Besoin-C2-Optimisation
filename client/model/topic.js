@@ -1,5 +1,6 @@
 import { Category } from "./category";
 import { User } from "./user";
+import { Post } from "./post";
 export class Topic {
     get TopicId() {
         return this.topicId;
@@ -31,11 +32,28 @@ export class Topic {
     set TopicUser(value) {
         this.topicUser = value;
     }
+    set TopicPosts(value) {
+        this.topicPosts = value;
+    }
+    get TopicPosts() {
+        return this.topicPosts;
+    }
     constructor() {
         this.topicId = 0;
         this.topicSubject = "";
         this.topicDate = new Date();
         this.topicCategory = new Category();
         this.topicUser = new User();
+        this.topicPosts = new Array();
+    }
+    static createFromObject(obj) {
+        const topic = new Topic();
+        topic.TopicId = obj.topicId || 0;
+        topic.TopicSubject = obj.topicSubject || "";
+        topic.TopicDate = obj.topicDate ? new Date(obj.topicDate) : new Date();
+        topic.TopicCategory = obj.topicCategory ? Category.createFromObject(obj.topicCategory) : new Category();
+        topic.TopicUser = obj.topicUser ? User.createFromObject(obj.topicUser) : new User();
+        topic.topicPosts = obj.topicPosts ? obj.topicPosts.map((vote) => Post.createFromObject(vote)) : new Array();
+        return topic;
     }
 }

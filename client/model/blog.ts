@@ -85,4 +85,16 @@ export class Blog{
     public set BlogUser(value: User){
         this.blogUser = value;
     }
+
+    public static createFromObject(obj: any): Blog {
+        const blog = new Blog();
+        blog.BlogId = obj.blogId || 0;
+        blog.BlogTitle = obj.blogTitle || "";
+        blog.BlogImg = obj.blogImg || "";
+        blog.BlogDate = obj.blogDate ? new Date(obj.blogDate) : new Date();
+        blog.BlogContent = obj.blogContent || "";
+        blog.BlogVotes = obj.blogVotes ? obj.blogVotes.map((vote: any) => BlogVote.createFromObject(vote)) : new Array<BlogVote>();
+        blog.BlogUser = obj.blogUser ? User.createFromObject(obj.blogUser) : new User();
+        return blog;
+    }
 }

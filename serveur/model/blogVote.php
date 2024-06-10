@@ -7,14 +7,13 @@ class BlogVote {
     private DateTime $blogVoteDate;
     private int $blogVote;
     private User $blogVoteUser;
-    private int $blogId;
 
     public function __construct() {
         $this->blogVoteId = 0;
         $this->blogVoteDate = new DateTime();
         $this->blogVote = 0;
         $this->blogVoteUser = new User();
-        $this->blogId = 0;
+
     }
 
     // Getters
@@ -34,10 +33,6 @@ class BlogVote {
         return $this->blogVoteUser;
     }
 
-    public function getBlogId(): int {
-        return $this->blogVote;
-    }
-
     // Setters
     public function setBlogVoteId(int $blogVoteId): void {
         $this->blogVoteId = $blogVoteId;
@@ -55,17 +50,13 @@ class BlogVote {
         $this->blogVoteUser = $user;
     }
 
-    public function setBlogId(int $blogId): void {
-        $this->blogId = $blogId;
-    }
 
     public function toArray(): array {
         return [
             'blogVoteId' => $this->blogVoteId,
             'blogVoteDate' => $this->blogVoteDate->format('Y-m-d H:i:s'),
             'blogVote' => $this->blogVote,
-            'blogVoteUser' => $this->blogVoteUser->toArray(),
-            'blogId' => $this->blogId,
+            'blogVoteUser' => $this->blogVoteUser->toArray()
         ];
     }
 
@@ -76,7 +67,6 @@ class BlogVote {
         $blogVote->setBlogVoteDate(new DateTime($obj->blogVoteDate));
         $blogVote->setBlogVote($obj->blogVote);
         $blogVote->setBlogVoteUser(User::createFromObject($obj->blogId));
-        $blogVote->setBlogId($obj->blogId);
 
         return $blogVote;
     }
@@ -88,7 +78,6 @@ class BlogVote {
         $blogVote->setBlogVoteId($array["blog_Vote_id"]);
         $blogVote->setBlogVoteDate(new DateTime($array["blog_Vote_date"]));
         $blogVote->setBlogVote($array["blog_Vote"]);
-        $blogVote->setBlogId($array["blog_id"]);
 
         return $blogVote;
     }

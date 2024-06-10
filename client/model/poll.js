@@ -1,3 +1,4 @@
+import { PollOption } from "./pollOption.js";
 import { User } from "./user.js";
 /**
  * Represents a poll
@@ -67,5 +68,18 @@ export class Poll {
     }
     set PollUser(value) {
         this.pollUser = value;
+    }
+    static createFromObject(obj) {
+        const poll = new Poll();
+        poll.PollId = obj.pollId || 0;
+        poll.PollSubject = obj.pollSubject || "";
+        poll.PollCreated = obj.pollCreated ? new Date(obj.pollCreated) : new Date();
+        poll.PollModified = obj.pollModified ? new Date(obj.pollModified) : new Date();
+        poll.PollStatus = obj.pollStatus || false;
+        poll.PollDesc = obj.pollDesc || "";
+        poll.PollLocked = obj.pollLocked || false;
+        poll.PollOptions = obj.pollOptions ? obj.pollOptions.map((option) => PollOption.createFromObject(option)) : new Array();
+        poll.PollUser = obj.pollUser ? User.createFromObject(obj.pollUser) : new User();
+        return poll;
     }
 }

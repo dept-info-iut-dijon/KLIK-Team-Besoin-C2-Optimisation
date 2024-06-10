@@ -22,4 +22,11 @@ export class Category {
         this.catName = "";
         this.catDescription = "";
     }
+    static createFromObject(obj) {
+        const category = new Category();
+        category.CatId = obj.catId || 0;
+        category.CatName = obj.catName || "";
+        category.CatDescription = obj.catDescription || "";
+        return category;
+    }
 }

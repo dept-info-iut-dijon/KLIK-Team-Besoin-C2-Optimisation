@@ -24,10 +24,26 @@ export class PostVote {
     set PostVoteUser(value) {
         this.postVoteUser = value;
     }
+    get PostId() {
+        return this.postId;
+    }
+    set PostId(value) {
+        this.postId = value;
+    }
     constructor() {
         this.postVoteId = 0;
         this.postVoteDate = new Date();
         this.postVote = 0;
         this.postVoteUser = new User();
+        this.postId = 0;
+    }
+    static createFromObject(obj) {
+        const postVote = new PostVote();
+        postVote.PostVoteId = obj.postVoteId || 0;
+        postVote.PostVoteDate = obj.postVoteDate ? new Date(obj.postVoteDate) : new Date();
+        postVote.PostVote = obj.postVote || 0;
+        postVote.PostVoteUser = obj.postVoteUser ? User.createFromObject(obj.postVoteUser) : new User();
+        postVote.PostId = obj.postId || 0;
+        return postVote;
     }
 }
