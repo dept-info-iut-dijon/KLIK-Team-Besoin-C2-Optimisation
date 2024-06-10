@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { User } from "./user.js";
 
 export class BlogVote{
     private blogVoteId: number;
@@ -11,6 +11,15 @@ export class BlogVote{
         this.blogVoteDate = new Date();
         this.blogVote = 0;
         this.blogVoteUser = new User();
+    }
+
+    public static createFromObject(object: any): BlogVote{
+        const blogVote = new BlogVote();
+        blogVote.blogVoteId = object.blogVoteId;
+        blogVote.blogVoteDate = object.blogVoteDate;
+        blogVote.blogVote = object.blogVote;
+        blogVote.blogVoteUser = new User();
+        return blogVote;
     }
 
     public get BlogVoteId(){

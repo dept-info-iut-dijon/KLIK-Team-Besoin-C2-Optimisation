@@ -6,10 +6,10 @@ class Category {
     private string $catName;
     private string $catDescription;
 
-    public function __construct(int $catId, string $catName, string $catDescription) {
-        $this->catId = $catId;
-        $this->catName = $catName;
-        $this->catDescription = $catDescription;
+    public function __construct() {
+        $this->catId = 0;
+        $this->catName = "";
+        $this->catDescription = "";
     }
 
     // Getters
@@ -38,20 +38,31 @@ class Category {
         $this->catDescription = $catDescription;
     }
 
-        // Ajouter la méthode toArray pour convertir l'objet en tableau associatif
-        public function toArray(): array {
-            return [
-                'catId' => $this->catId,
-                'catName' => $this->catName,
-                'catDescription' => $this->catDescription
-            ];
-        }
+    public function toArray(): array {
+        return [
+            'catId' => $this->catId,
+            'catName' => $this->catName,
+            'catDescription' => $this->catDescription
+        ];
+    }
 
-        public static function createFromObject(object $data): Category {
-            $catId = $data->catId;
-            $catName = $data->catName;
-            $catDescription = $data->catDescription;
-    
-            return new self($catId, $catName, $catDescription);
-        }
+    public static function createFromObject($obj): Category {
+        $category = new Category();
+
+        $category->setCatId($obj->catId);
+        $category->setCatName($obj->catName);
+        $category->setCatDescription($obj->catDescription);
+
+        return $category;
+    }
+
+    public static function createFromDb($array): Category {
+        $category = new Category();
+
+        $category->setCatId($array["cat_id"]);
+        $category->setCatName($array["cat_name"]);
+        $category->setCatDescription($array["cat_description"]);
+
+        return $category;
+    }
 }

@@ -10,80 +10,140 @@ require_once '../model/conversation.php';
 
 
 class MessageDAO implements MessageDAOInterface {
-    private $pdo;
+    private Database $db;
+    private UserDAO $userDAO;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
+        $this->userDAO = new UserDAO();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(Message $message): bool {
-        $sql = "INSERT INTO Messages (message_content, message_date, conversation_id, user_id) VALUES (?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $message->getMessageContent(),
-            $message->getMessageDate()->format('Y-m-d H:i:s'),
-            $message->getConversation()->getConversationId(),
-            $message->getUser()->getUserId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $message->getMessageContent(),
+                $message->getMessageDate()->format('Y-m-d H:i:s'),
+                $message->getConversationId(),
+                $message->getMessageUser()->getUserId()
+            ];
+            $sql = "INSERT INTO Messages (message_content, message_date, conversation_id, user_id) VALUES (?, ?, ?, ?)";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function read(int $messageId): ?Message {
-        $sql = "SELECT * FROM Messages WHERE message_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$messageId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->db->query("SELECT * FROM Messages WHERE message_id = ?", [$messageId]);
 
-        if ($row) {
-            $conversationDAO = new ConversationDAO();
-            $userDAO = new UserDAO();
-            $conversation = $conversationDAO->read($row['conversation_id']);
-            $user = $userDAO->read($row['user_id']);
-            return new Message(
-                $row['message_id'],
-                $row['message_content'],
-                new DateTime($row['message_date']),
-                $conversation,
-                $user
-            );
-        }
-        return null;
+        if(count($result) === 0)
+            throw new Exception("Message not found");
+
+        $user = $this->userDAO->read($result[0]["user_id"]);
+
+        $message = Message::createFromDb($result[0]);
+        $message->setMessageUser($user);
+
+        return $message;
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(Message $message): bool {
-        $sql = "UPDATE Messages SET message_content = ?, message_date = ?, conversation_id = ?, user_id = ? WHERE message_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $message->getMessageContent(),
-            $message->getMessageDate()->format('Y-m-d H:i:s'),
-            $message->getConversation()->getConversationId(),
-            $message->getUser()->getUserId(),
-            $message->getMessageId()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function delete(int $messageId): bool {
-        $sql = "DELETE FROM Messages WHERE message_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$messageId]);
-    }
+        try
+        {
+            $params = [
+                $message->getMessageContent(),
+                $message->getMessageDate()->format('Y-m-d H:i:s'),
+                $message->getConversationId(),
+                $message->getMessageUser()->getUserId(),
+                $message->getMessageId()
+            ];
+            $sql = "UPDATE Messages SET message_content = ?, message_date = ?, conversation_id = ?, user_id = ? WHERE message_id = ?";
 
-    public function getAll(): array {
-        $sql = "SELECT * FROM Messages";
-        $stmt = $this->pdo->query($sql);
-        $messages = [];
-        $conversationDAO = new ConversationDAO();
-        $userDAO = new UserDAO();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $conversation = $conversationDAO->read($row['conversation_id']);
-            $user = $userDAO->read($row['user_id']);
-            $messages[] = new Message(
-                $row['message_id'],
-                $row['message_content'],
-                new DateTime($row['message_date']),
-                $conversation,
-                $user
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return $messages;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(int $messageId): bool {
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Messages WHERE message_id = ?", [$messageId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getAll(): array {
+        $messages = $this->db->query("SELECT * FROM Messages");
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $message = Message::createFromDb($item);
+            $message->setMessageUser($user);
+
+            return $message;
+        }, $messages);
+    }
+
+    /**
+     * @param int $conversationId
+     * @return array
+     * @throws Exception
+     */
+    public function getMessagesByConversation(int $conversationId): array
+    {
+        $result = $this->db->query("SELECT * FROM Messages WHERE conversation_id = ?", [$conversationId]);
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $message = Message::createFromDb($item);
+            $message->setMessageUser($user);
+
+            return $message;
+        }, $result);
     }
 }

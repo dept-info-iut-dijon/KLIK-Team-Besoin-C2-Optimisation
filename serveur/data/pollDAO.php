@@ -1,6 +1,7 @@
 <?php
 
 require_once 'userDAO.php';
+require_once 'pollOptionDAO.php';
 require_once '../data/interface/pollDAOInterface.php';
 
 require_once '../data/interface/pollDAOInterface.php';
@@ -8,88 +9,134 @@ require_once '../model/poll.php';
 
 
 class PollDAO implements PollDAOInterface {
-    private $pdo;
+    private Database $db;
+    private UserDAO $userDAO;
+    private pollOptionDAO $pollOptionDAO;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
+        $this->userDAO = new UserDAO();
+        $this->pollOptionDAO = new pollOptionDAO();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(Poll $poll): bool {
-        $sql = "INSERT INTO Polls (poll_subject, poll_created, poll_modified, poll_status, poll_description, poll_locked, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $poll->getPollSubject(),
-            $poll->getPollCreated()->format('Y-m-d H:i:s'),
-            $poll->getPollModified()->format('Y-m-d H:i:s'),
-            $poll->getPollStatus(),
-            $poll->getPollDescription(),
-            $poll->getPollLocked(),
-            $poll->getUser()->getUserId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $poll->getPollSubject(),
+                $poll->getPollCreated()->format('Y-m-d H:i:s'),
+                $poll->getPollModified()->format('Y-m-d H:i:s'),
+                $poll->getPollStatus(),
+                $poll->getPollDescription(),
+                $poll->getPollLocked(),
+                $poll->getPollUser()->getUserId()
+            ];
+            $sql = "INSERT INTO Polls (poll_subject, poll_created, poll_modified, poll_status, poll_description, poll_locked, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function read(int $pollId): ?Poll {
-        $sql = "SELECT * FROM Polls WHERE poll_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$pollId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->db->query("SELECT * FROM Polls WHERE poll_id = ?", [$pollId]);
 
-        if ($row) {
-            $userDAO = new UserDAO();
-            $user = $userDAO->read($row['user_id']);
-            return new Poll(
-                $row['poll_id'],
-                $row['poll_subject'],
-                new DateTime($row['poll_created']),
-                new DateTime($row['poll_modified']),
-                $row['poll_status'],
-                $row['poll_description'],
-                $row['poll_locked'],
-                $user
-            );
-        }
-        return null;
+        if(count($result) === 0)
+            throw new Exception("Poll not found");
+
+        $user = $this->userDAO->read($result[0]["user_id"]);
+        $pollOptions = $this->pollOptionDAO->getPollOptionsByPoll($result[0]["poll_id"]);
+
+        $poll = Poll::createFromDb($result[0]);
+        $poll->setPollUser($user);
+        $poll->setPollOptions($pollOptions);
+
+        return $poll;
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(Poll $poll): bool {
-        $sql = "UPDATE Polls SET poll_subject = ?, poll_created = ?, poll_modified = ?, poll_status = ?, poll_description = ?, poll_locked = ?, user_id = ? WHERE poll_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $poll->getPollSubject(),
-            $poll->getPollCreated()->format('Y-m-d H:i:s'),
-            $poll->getPollModified()->format('Y-m-d H:i:s'),
-            $poll->getPollStatus(),
-            $poll->getPollDescription(),
-            $poll->getPollLocked(),
-            $poll->getUser()->getUserId(),
-            $poll->getPollId()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function delete(int $pollId): bool {
-        $sql = "DELETE FROM Polls WHERE poll_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$pollId]);
-    }
+        try
+        {
+            $params = [
+                $poll->getPollSubject(),
+                $poll->getPollCreated()->format('Y-m-d H:i:s'),
+                $poll->getPollModified()->format('Y-m-d H:i:s'),
+                $poll->getPollStatus(),
+                $poll->getPollDescription(),
+                $poll->getPollLocked(),
+                $poll->getPollUser()->getUserId(),
+                $poll->getPollId()
 
-    public function getAll(): array {
-        $sql = "SELECT * FROM Polls";
-        $stmt = $this->pdo->query($sql);
-        $polls = [];
-        $userDAO = new UserDAO();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = $userDAO->read($row['user_id']);
-            $polls[] = new Poll(
-                $row['poll_id'],
-                $row['poll_subject'],
-                new DateTime($row['poll_created']),
-                new DateTime($row['poll_modified']),
-                $row['poll_status'],
-                $row['poll_description'],
-                $row['poll_locked'],
-                $user
-            );
+            ];
+            $sql = "UPDATE Polls SET poll_subject = ?, poll_created = ?, poll_modified = ?, poll_status = ?, poll_description = ?, poll_locked = ?, user_id = ? WHERE poll_id = ?";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return $polls;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(int $pollId): bool {
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Polls WHERE poll_id = ?", [$pollId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getAll(): array {
+        $polls = $this->db->query("SELECT * FROM Polls");
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+            $pollOptions = $this->pollOptionDAO->getPollOptionsByPoll($item["poll_id"]);
+
+            $poll = Poll::createFromDb($item);
+            $poll->setPollUser($user);
+            $poll->setPollOptions($pollOptions);
+
+            return $poll;
+        }, $polls);
     }
 }

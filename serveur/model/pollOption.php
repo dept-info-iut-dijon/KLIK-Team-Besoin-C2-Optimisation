@@ -1,18 +1,20 @@
 <?php
 
-require_once 'poll.php';
+require_once 'pollVote.php';
 
 class PollOption {
     private int $pollOptionId;
     private string $pollOptionName;
     private bool $pollOptionStatus;
-    private Poll $poll;
+    private int $pollId;
+    private array $pollVotes;
 
-    public function __construct(int $pollOptionId, string $pollOptionName, bool $pollOptionStatus, Poll $poll) {
-        $this->pollOptionId = $pollOptionId;
-        $this->pollOptionName = $pollOptionName;
-        $this->pollOptionStatus = $pollOptionStatus;
-        $this->poll = $poll;
+    public function __construct() {
+        $this->pollOptionId = 0;
+        $this->pollOptionName = "";
+        $this->pollOptionStatus = false;
+        $this->pollId = 0;
+        $this->pollVotes = array();
     }
 
     // Getters
@@ -28,8 +30,12 @@ class PollOption {
         return $this->pollOptionStatus;
     }
 
-    public function getPoll(): Poll {
-        return $this->poll;
+    public function getPollId(): int {
+        return $this->pollId;
+    }
+
+    public function getPollVotes(): array {
+        return $this->pollVotes;
     }
 
     // Setters
@@ -45,8 +51,12 @@ class PollOption {
         $this->pollOptionStatus = $pollOptionStatus;
     }
 
-    public function setPoll(Poll $poll): void {
-        $this->poll = $poll;
+    public function setPoll(int $pollId): void {
+        $this->pollId = $pollId;
+    }
+
+    public function setPollVotes(array $pollVotes): void {
+        $this->pollVotes = $pollVotes;
     }
 
     public function toArray(): array {
@@ -54,7 +64,33 @@ class PollOption {
             'pollOptionId' => $this->pollOptionId,
             'pollOptionName' => $this->pollOptionName,
             'pollOptionStatus' => $this->pollOptionStatus,
-            'poll' => $this->poll->toArray() 
+            'pollId' => $this->pollId,
+            'pollVotes' => array_map(function($pollVote) { return $pollVote->toArray(); }, $this->pollVotes)
         ];
+    }
+
+    public static function createFromObject($obj): PollOption {
+        $pollOption = new PollOption();
+
+        $pollOption->setPollOptionId($obj->pollOptionId);
+        $pollOption->setPollOptionName($obj->pollOptionName);
+        $pollOption->setPollOptionStatus($obj->pollOptionStatus);
+        $pollOption->setPoll($obj->pollId);
+        $pollOption->setPollVotes(array_map(function($pollVote) {
+            return PollVote::createFromObject($pollVote);
+        }, $obj->pollVotes));
+
+        return $pollOption;
+    }
+
+    public static function createFromDb($array): PollOption {
+        $pollOption = new PollOption();
+
+        $pollOption->setPollOptionId($array["poll_Option_id"]);
+        $pollOption->setPollOptionName($array["poll_Option_name"]);
+        $pollOption->setPollOptionStatus($array["poll_Option_status"]);
+        $pollOption->setPoll($array["poll_id"]);
+
+        return $pollOption;
     }
 }

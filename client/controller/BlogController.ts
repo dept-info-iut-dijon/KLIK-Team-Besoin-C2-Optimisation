@@ -1,6 +1,6 @@
-import { Blog } from "../model/blog";
-import BlogNetwork from "../network/BlogNetwork";
-import { IBlogController } from "./interfaces/IBlogController";
+import { Blog } from "../model/blog.js";
+import BlogNetwork from "../network/BlogNetwork.js";
+import { IBlogController } from "./interfaces/IBlogController.js";
 
 export default class BlogController implements IBlogController{
     private blogNetwork: BlogNetwork;
@@ -13,4 +13,7 @@ export default class BlogController implements IBlogController{
         return this.blogNetwork.createBlog(blog);
     }
 
+    getAllBlogs(): Promise<Array<Blog>>{
+        return this.blogNetwork.getAllBlogs();
+    }
 }

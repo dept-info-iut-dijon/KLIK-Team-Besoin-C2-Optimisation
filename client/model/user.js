@@ -78,4 +78,19 @@ export class User {
         this.userBio = "";
         this.userImage = "";
     }
+    static createFromObject(object) {
+        const user = new User();
+        user.userId = object.userId;
+        user.userLevel = object.userLevel;
+        user.userFirstName = object.userFirstName;
+        user.userLastName = object.userLastName;
+        user.username = object.username;
+        user.userEmail = object.userEmail;
+        user.userPassword = object.userPassword;
+        user.userGender = object.userGender;
+        user.userHeadline = object.userHeadline;
+        user.userBio = object.userBio;
+        user.userImage = object.userimage;
+        return user;
+    }
 }

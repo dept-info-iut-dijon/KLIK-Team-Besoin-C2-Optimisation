@@ -1,7 +1,7 @@
 export class ProfileCard {
     static GenerateProfileCard(divName) {
         //GET USER INFO
-        const userImg = "./uploads/default.png";
+        const userImg = "./src/uploads/default.png";
         const userLevel = 1;
         const username = "jdoe";
         const userFirstName = "John";
@@ -16,7 +16,7 @@ export class ProfileCard {
         const userCover = document.createElement("img");
         userCover.alt = "";
         userCover.classList.add("card-img-top", "card-user-cover");
-        userCover.src = "./img/user-cover.png";
+        userCover.src = "./src/img/user-cover.png";
         profileCardDiv.appendChild(userCover);
         //card block
         const cardBlock = document.createElement("div");
@@ -34,7 +34,7 @@ export class ProfileCard {
         if (userLevel == 1) {
             const adminBadge = document.createElement("img");
             adminBadge.id = "card-admin-badge";
-            adminBadge.src = "./img/admin-badge.png";
+            adminBadge.src = "./src/img/admin-badge.png";
             cardBlock.appendChild(adminBadge);
         }
         //edit profile icon

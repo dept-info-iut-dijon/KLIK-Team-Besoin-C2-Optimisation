@@ -1,21 +1,20 @@
 <?php
 
 require_once 'user.php';
-require_once 'post.php';
 
 class PostVote {
     private int $postVoteId;
     private DateTime $postVoteDate;
     private int $postVote;
     private int $postId;
-    private User $user;
+    private User $postVoteUser;
 
-    public function __construct(int $postVoteId, DateTime $postVoteDate, int $postVote, int $postId, User $user) {
-        $this->postVoteId = $postVoteId;
-        $this->postVoteDate = $postVoteDate;
-        $this->postVote = $postVote;
-        $this->postId = $postId;
-        $this->user = $user;
+    public function __construct() {
+        $this->postVoteId = 0;
+        $this->postVoteDate = new DateTime();
+        $this->postVote = 0;
+        $this->postId = 0;
+        $this->postVoteUser = new User();
     }
 
     // Getters
@@ -35,8 +34,8 @@ class PostVote {
         return $this->postId;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getPostVoteUser(): User {
+        return $this->postVoteUser;
     }
 
     // Setters
@@ -56,8 +55,8 @@ class PostVote {
         $this->postId = $post;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setPostVoteUser(User $user): void {
+        $this->postVoteUser = $user;
     }
 
     public function toArray(): array {
@@ -66,7 +65,30 @@ class PostVote {
             'postVoteDate' => $this->postVoteDate->format('Y-m-d H:i:s'),
             'postVote' => $this->postVote,
             'postId' => $this->postId,
-            'user' => $this->user->toArray()
+            'postVoteUser' => $this->postVoteUser->toArray()
         ];
+    }
+
+    public static function createFromObject($obj): PostVote {
+        $postVote = new PostVote();
+
+        $postVote->setPostVoteId($obj->postVoteId);
+        $postVote->setPostVoteDate(new DateTime($obj->postVoteDate));
+        $postVote->setPostVote($obj->postVote);
+        $postVote->setPostId($obj->postId);
+        $postVote->setPostVoteUser(User::createFromObject($obj->postVoteUser));
+
+        return $postVote;
+    }
+
+    public static function createFromDb($array): PostVote {
+        $postVote = new PostVote();
+
+        $postVote->setPostVoteId($array["post_Vote_id"]);
+        $postVote->setPostVoteDate(new DateTime($array["post_Vote_date"]));
+        $postVote->setPostVote($array["post_Vote"]);
+        $postVote->setPostId($array["post_id"]);
+
+        return $postVote;
     }
 }

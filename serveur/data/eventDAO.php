@@ -7,88 +7,127 @@ require_once '../model/user.php';
 
 
 class EventDAO implements EventDAOInterface {
-    private $pdo;
+    private Database $db;
+    private UserDAO $userDAO;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
+        $this->userDAO = new UserDAO();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(Event $event): bool {
-        $sql = "INSERT INTO Events (event_title, event_date_created, event_date, event_img, event_headline, event_description, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $event->getEventTitle(),
-            $event->getEventDateCreated()->format('Y-m-d'),
-            $event->getEventDate()->format('Y-m-d'),
-            $event->getEventImg(),
-            $event->getEventHeadline(),
-            $event->getEventDescription(),
-            $event->getUser()->getUserId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $event->getEventTitle(),
+                $event->getEventDateCreated()->format('Y-m-d'),
+                $event->getEventDate()->format('Y-m-d'),
+                $event->getEventImg(),
+                $event->getEventHeadline(),
+                $event->getEventDescription(),
+                $event->getUser()->getUserId()
+            ];
+            $sql = "INSERT INTO Events (event_title, event_date_created, event_date, event_img, event_headline, event_description, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function read(int $eventId): ?Event {
-        $sql = "SELECT * FROM Events WHERE event_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$eventId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->db->query("SELECT * FROM Events WHERE event_id = ?", [$eventId]);
 
-        if ($row) {
-            $userDAO = new UserDAO();
-            $user = $userDAO->read($row['user_id']);
-            return new Event(
-                $row['event_id'],
-                $row['event_title'],
-                new DateTime($row['event_date_created']),
-                new DateTime($row['event_date']),
-                $row['event_img'],
-                $row['event_headline'],
-                $row['event_description'],
-                $user
-            );
-        }
-        return null;
+        if(count($result) === 0)
+            throw new Exception("Event not found");
+
+        $user = $this->userDAO->read($result[0]["user_id"]);
+
+        $event = Event::createFromDb($result[0]);
+        $event->setEventUser($user);
+
+        return $event;
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(Event $event): bool {
-        $sql = "UPDATE Events SET event_title = ?, event_date_created = ?, event_date = ?, event_img = ?, event_headline = ?, event_description = ?, user_id = ? WHERE event_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $event->getEventTitle(),
-            $event->getEventDateCreated()->format('Y-m-d'),
-            $event->getEventDate()->format('Y-m-d'),
-            $event->getEventImg(),
-            $event->getEventHeadline(),
-            $event->getEventDescription(),
-            $event->getUser()->getUserId(),
-            $event->getEventId()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function delete(int $eventId): bool {
-        $sql = "DELETE FROM Events WHERE event_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$eventId]);
-    }
+        try
+        {
+            $params = [
+                $event->getEventTitle(),
+                $event->getEventDateCreated()->format('Y-m-d'),
+                $event->getEventDate()->format('Y-m-d'),
+                $event->getEventImg(),
+                $event->getEventHeadline(),
+                $event->getEventDescription(),
+                $event->getEventUser()->getUserId(),
+                $event->getEventId()
+            ];
+            $sql = "UPDATE Events SET event_title = ?, event_date_created = ?, event_date = ?, event_img = ?, event_headline = ?, event_description = ?, user_id = ? WHERE event_id = ?";
 
-    public function getAll(): array {
-        $sql = "SELECT * FROM Events";
-        $stmt = $this->pdo->query($sql);
-        $events = [];
-        $userDAO = new UserDAO();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = $userDAO->read($row['user_id']);
-            $events[] = new Event(
-                $row['event_id'],
-                $row['event_title'],
-                new DateTime($row['event_date_created']),
-                new DateTime($row['event_date']),
-                $row['event_img'],
-                $row['event_headline'],
-                $row['event_description'],
-                $user
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return $events;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(int $eventId): bool {
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Events WHERE event_id = ?", [$eventId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getAll(): array {
+        $events = $this->db->query("SELECT * FROM Events");
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $event = Event::createFromDb($item);
+            $event->setEventUser($user);
+
+            return $event;
+        }, $events);
     }
 }

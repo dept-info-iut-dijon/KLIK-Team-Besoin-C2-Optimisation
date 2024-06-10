@@ -2,7 +2,7 @@ export class ProfileCard{
     public static GenerateProfileCard(divName: string): void{
 
         //GET USER INFO
-        const userImg: string = "./uploads/default.png";
+        const userImg: string = "./src/uploads/default.png";
         const userLevel: number = 1;
         const username: string = "jdoe";
         const userFirstName: string = "John";
@@ -19,7 +19,7 @@ export class ProfileCard{
         const userCover: HTMLImageElement = document.createElement("img");
         userCover.alt = "";
         userCover.classList.add("card-img-top", "card-user-cover");
-        userCover.src="./img/user-cover.png";
+        userCover.src="./src/img/user-cover.png";
         profileCardDiv.appendChild(userCover);
 
         //card block
@@ -40,7 +40,7 @@ export class ProfileCard{
         if(userLevel == 1){
             const adminBadge: HTMLImageElement = document.createElement("img");
             adminBadge.id="card-admin-badge";
-            adminBadge.src="./img/admin-badge.png";
+            adminBadge.src="./src/img/admin-badge.png";
             cardBlock.appendChild(adminBadge);
         }
 

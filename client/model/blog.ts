@@ -11,7 +11,7 @@ export class Blog{
     private blogImg: string;
     private blogDate: Date;
     private blogContent: string;
-    private blogVotes: Array<BlogVote>
+    private blogVotes: Array<BlogVote>;
     private blogUser: User;
 
     constructor(){
@@ -20,8 +20,20 @@ export class Blog{
         this.blogImg = "";
         this.blogDate = new Date();
         this.blogContent = "";
-        this.blogVotes = new Array<BlogVote>;
+        this.blogVotes = new Array<BlogVote>();
         this.blogUser = new User();
+    }
+
+    public static createFromObject(object: any): Blog{
+        const blog = new Blog();
+        blog.blogId = object.blogId;
+        blog.blogTitle = object.blogTitle;
+        blog.blogImg = object.blogImg;
+        blog.blogDate = new Date(object.blogDate);
+        blog.blogContent = object.blogContent;
+        blog.blogVotes = object.blogVotes.map(BlogVote.createFromObject);
+        blog.blogUser = new User();
+        return blog;
     }
     
     public get BlogId(){

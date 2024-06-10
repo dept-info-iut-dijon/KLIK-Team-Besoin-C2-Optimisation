@@ -7,11 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Blog } from "../model/blog.js";
 export default class BlogNetwork {
     createBlog(blog) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield fetch('http://localhost/serveur/controller/blogController.php?action=create', {
+                const response = yield fetch(`../serveur/controller/blogController.php?action=create`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -19,16 +20,33 @@ export default class BlogNetwork {
                     body: JSON.stringify(blog),
                 });
                 if (!response.ok) {
-                    throw new Error("Aucune réponse du serveur");
+                    throw new Error(`Bad response from server: ${response.status}`);
                 }
                 const result = yield response.json();
-                console.log('Blog créé :', result);
+                console.log('Created blog:', result);
                 return true;
             }
             catch (error) {
-                console.error('Erreur lors de la création du Blog : ' + error.message);
+                console.error('Error when creating blog: ' + error.message);
                 return false;
             }
+        });
+    }
+    getAllBlogs() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let result = new Array();
+            try {
+                const response = yield fetch(`../serveur/controller/blogController.php?action=all`);
+                if (!response.ok) {
+                    throw new Error(`Bad response from server: ${response.status}`);
+                }
+                const json = yield response.json();
+                result = json.map((obj) => Blog.createFromObject(obj));
+            }
+            catch (error) {
+                console.error('Error when getting blogs: ' + error.message);
+            }
+            return result;
         });
     }
 }

@@ -6,5 +6,6 @@ interface PollVoteDAOInterface {
     public function update(PollVote $pollVote): bool;
     public function delete(int $pollVoteId): bool;
     public function getAll(): array;
+    public function getPollVoteByPollOption(int $pollOptionId): array;
 }
 

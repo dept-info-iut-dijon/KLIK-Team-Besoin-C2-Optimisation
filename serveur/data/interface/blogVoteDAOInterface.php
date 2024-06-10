@@ -6,4 +6,5 @@ interface BlogVoteDAOInterface {
     public function update(BlogVote $blogVote): bool;
     public function delete(int $blogVoteId): bool;
     public function getAll(): array;
+    public function getBlogVoteByBlog(int $blogId): array;
 }

@@ -13,7 +13,7 @@ export class Navbar{
         logoLink.classList.add("navbar-brand");
         logoLink.href = "index.html";
         const logoLinkImg: HTMLImageElement = document.createElement("img");
-        logoLinkImg.src = "./img/200.png";
+        logoLinkImg.src = "./src/img/200.png";
         logoLinkImg.width = 40;
         logoLinkImg.height = 40;
         logoLink.appendChild(logoLinkImg);
@@ -45,6 +45,7 @@ export class Navbar{
         collapseDiv.appendChild(ul);
 
         //item 1 : dashboard
+        /*
         const ulItem1: HTMLLIElement = document.createElement("li");
         ulItem1.classList.add("nav-item", "px-3");
         ul.appendChild(ulItem1);
@@ -56,6 +57,7 @@ export class Navbar{
         iconItem1.classList.add("fa", "fa-bar-chart", "fa-2x");
         iconItem1.setAttribute("aria-hidden", "true");
         aItem1.appendChild(iconItem1);
+        */
 
         //item 2 : github
         const ulItem2: HTMLLIElement = document.createElement("li");

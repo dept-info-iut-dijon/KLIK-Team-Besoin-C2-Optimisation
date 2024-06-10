@@ -10,7 +10,7 @@ export class Navbar {
         logoLink.classList.add("navbar-brand");
         logoLink.href = "index.html";
         const logoLinkImg = document.createElement("img");
-        logoLinkImg.src = "./img/200.png";
+        logoLinkImg.src = "./src/img/200.png";
         logoLinkImg.width = 40;
         logoLinkImg.height = 40;
         logoLink.appendChild(logoLinkImg);
@@ -38,17 +38,19 @@ export class Navbar {
         ul.classList.add("navbar-nav", "ml-auto", "mr-1");
         collapseDiv.appendChild(ul);
         //item 1 : dashboard
-        const ulItem1 = document.createElement("li");
+        /*
+        const ulItem1: HTMLLIElement = document.createElement("li");
         ulItem1.classList.add("nav-item", "px-3");
         ul.appendChild(ulItem1);
-        const aItem1 = document.createElement("a");
+        const aItem1: HTMLAnchorElement = document.createElement("a");
         aItem1.classList.add("nav-link");
         aItem1.href = "index.html";
         ulItem1.appendChild(aItem1);
-        const iconItem1 = document.createElement("i");
+        const iconItem1: HTMLElement = document.createElement("i");
         iconItem1.classList.add("fa", "fa-bar-chart", "fa-2x");
         iconItem1.setAttribute("aria-hidden", "true");
         aItem1.appendChild(iconItem1);
+        */
         //item 2 : github
         const ulItem2 = document.createElement("li");
         ulItem2.classList.add("nav-item", "px-3");

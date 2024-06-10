@@ -11,18 +11,15 @@ class MessageController {
         $this->messageManager = new MessageManager();
     }
 
-    public function createMessage() {
+    /**
+     * @throws Exception
+     */
+    public function createMessage(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['message'])) {
-                $messageArray = $data['message'];
-                $message = new Message(
-                    0, // Assuming 0 for new Message ID
-                    $messageArray['messageContent'],
-                    new DateTime($messageArray['messageDate']),
-                    (new ConversationDAO())->read($messageArray['conversationId']),
-                    (new UserDAO())->read($messageArray['userId'])
-                );
+                $message = Message::createFromObject($data['message']);
 
                 $result = $this->messageManager->createMessage($message);
 
@@ -37,7 +34,11 @@ class MessageController {
         }
     }
 
-    public function getMessageById($messageId) {
+    /**
+     * @throws Exception
+     */
+    public function getMessageById($messageId): void
+    {
         $message = $this->messageManager->getMessageById($messageId);
         if ($message) {
             echo json_encode($message->toArray());
@@ -46,18 +47,15 @@ class MessageController {
         }
     }
 
-    public function updateMessage() {
+    /**
+     * @throws Exception
+     */
+    public function updateMessage(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['message'])) {
-                $messageArray = $data['message'];
-                $message = new Message(
-                    $messageArray['messageId'],
-                    $messageArray['messageContent'],
-                    new DateTime($messageArray['messageDate']),
-                    (new ConversationDAO())->read($messageArray['conversationId']),
-                    (new UserDAO())->read($messageArray['userId'])
-                );
+                $message = Message::createFromObject($data['message']);
 
                 $result = $this->messageManager->updateMessage($message);
 
@@ -72,7 +70,11 @@ class MessageController {
         }
     }
 
-    public function deleteMessage($messageId) {
+    /**
+     * @throws Exception
+     */
+    public function deleteMessage($messageId): void
+    {
         $result = $this->messageManager->deleteMessage($messageId);
 
         if ($result) {
@@ -82,13 +84,14 @@ class MessageController {
         }
     }
 
-    public function getAllMessages() {
+    /**
+     * @throws Exception
+     */
+    public function getAllMessages(): void
+    {
         $messages = $this->messageManager->getAllMessages();
-        $resultArray = [];
-        foreach ($messages as $message) {
-            $resultArray[] = $message->toArray();
-        }
-        echo json_encode($resultArray);
+
+        echo json_encode(array_map(function($message) { return $message->toArray(); }, $messages));
     }
 }
 
@@ -96,31 +99,37 @@ if (isset($_GET['action'])) {
     $controller = new MessageController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createMessage();
-            break;
-        case 'read':
-            if (isset($_GET['messageId'])) {
-                $controller->getMessageById(intval($_GET['messageId']));
-            }
-            break;
-        case 'update':
-            $controller->updateMessage();
-            break;
-        case 'delete':
-            if (isset($_GET['messageId'])) {
-                $controller->deleteMessage(intval($_GET['messageId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllMessages();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createMessage();
+                break;
+            case 'read':
+                if (isset($_GET['messageId'])) {
+                    $controller->getMessageById(intval($_GET['messageId']));
+                }
+                break;
+            case 'update':
+                $controller->updateMessage();
+                break;
+            case 'delete':
+                if (isset($_GET['messageId'])) {
+                    $controller->deleteMessage(intval($_GET['messageId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllMessages();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>
