@@ -13,17 +13,6 @@ export class Blog {
         this.blogVotes = new Array();
         this.blogUser = new User();
     }
-    static createFromObject(object) {
-        const blog = new Blog();
-        blog.blogId = object.blogId;
-        blog.blogTitle = object.blogTitle;
-        blog.blogImg = object.blogImg;
-        blog.blogDate = new Date(object.blogDate);
-        blog.blogContent = object.blogContent;
-        blog.blogVotes = object.blogVotes.map(BlogVote.createFromObject);
-        blog.blogUser = new User();
-        return blog;
-    }
     get BlogId() {
         return this.blogId;
     }
