@@ -11,18 +11,15 @@ class TopicController {
         $this->topicManager = new TopicManager();
     }
 
-    public function createTopic() {
+    /**
+     * @throws Exception
+     */
+    public function createTopic(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['topic'])) {
-                $topicArray = $data['topic'];
-                $topic = new Topic(
-                    0, 
-                    $topicArray['subject'],
-                    new DateTime($topicArray['date']),
-                    (new CategoryDAO())->read($topicArray['categoryId']),
-                    (new UserDAO())->read($topicArray['userId'])
-                );
+                $topic = Topic::createFromObject($data['topic']);
 
                 $result = $this->topicManager->createTopic($topic);
 
@@ -37,8 +34,13 @@ class TopicController {
         }
     }
 
-    public function getTopicById($topicId) {
+    /**
+     * @throws Exception
+     */
+    public function getTopicById($topicId): void
+    {
         $topic = $this->topicManager->getTopicById($topicId);
+
         if ($topic) {
             echo json_encode($topic->toArray());
         } else {
@@ -46,18 +48,15 @@ class TopicController {
         }
     }
 
-    public function updateTopic() {
+    /**
+     * @throws Exception
+     */
+    public function updateTopic(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['topic'])) {
-                $topicArray = $data['topic'];
-                $topic = new Topic(
-                    $topicArray['topicId'],
-                    $topicArray['subject'],
-                    new DateTime($topicArray['date']),
-                    (new CategoryDAO())->read($topicArray['categoryId']),
-                    (new UserDAO())->read($topicArray['userId'])
-                );
+                $topic = Topic::createFromObject($data['topic']);
 
                 $result = $this->topicManager->updateTopic($topic);
 
@@ -72,7 +71,11 @@ class TopicController {
         }
     }
 
-    public function deleteTopic($topicId) {
+    /**
+     * @throws Exception
+     */
+    public function deleteTopic($topicId): void
+    {
         $result = $this->topicManager->deleteTopic($topicId);
 
         if ($result) {
@@ -82,13 +85,14 @@ class TopicController {
         }
     }
 
-    public function getAllTopics() {
+    /**
+     * @throws Exception
+     */
+    public function getAllTopics(): void
+    {
         $topics = $this->topicManager->getAllTopics();
-        $topicArray = [];
-        foreach ($topics as $topic) {
-            $topicArray[] = $topic->toArray();
-        }
-        echo json_encode($topicArray);
+
+        echo json_encode(array_map(function($topic) { return $topic->toArray(); }, $topics));
     }
 }
 
@@ -96,31 +100,38 @@ if (isset($_GET['action'])) {
     $controller = new TopicController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createTopic();
-            break;
-        case 'read':
-            if (isset($_GET['topicId'])) {
-                $controller->getTopicById(intval($_GET['topicId']));
-            }
-            break;
-        case 'update':
-            $controller->updateTopic();
-            break;
-        case 'delete':
-            if (isset($_GET['topicId'])) {
-                $controller->deleteTopic(intval($_GET['topicId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllTopics();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createTopic();
+                break;
+            case 'read':
+                if (isset($_GET['topicId'])) {
+                    $controller->getTopicById(intval($_GET['topicId']));
+                }
+                break;
+            case 'update':
+                $controller->updateTopic();
+                break;
+            case 'delete':
+                if (isset($_GET['topicId'])) {
+                    $controller->deleteTopic(intval($_GET['topicId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllTopics();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
     }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
+    }
+
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>

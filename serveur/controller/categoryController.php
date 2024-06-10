@@ -9,16 +9,15 @@ class CategoryController {
         $this->categoryManager = new CategoryManager();
     }
 
-    public function createCategory() {
+    /**
+     * @throws Exception
+     */
+    public function createCategory(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['category'])) {
-                $categoryArray = $data['category'];
-                $category = new Category(
-                    0, 
-                    $categoryArray['catName'],
-                    $categoryArray['catDescription']
-                );
+                $category = Category::createFromObject($data['category']);
 
                 $result = $this->categoryManager->createCategory($category);
 
@@ -33,8 +32,13 @@ class CategoryController {
         }
     }
 
-    public function getCategoryById($catId) {
+    /**
+     * @throws Exception
+     */
+    public function getCategoryById($catId): void
+    {
         $category = $this->categoryManager->getCategoryById($catId);
+
         if ($category) {
             echo json_encode($category->toArray());
         } else {
@@ -42,16 +46,15 @@ class CategoryController {
         }
     }
 
-    public function updateCategory() {
+    /**
+     * @throws Exception
+     */
+    public function updateCategory(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['category'])) {
-                $categoryArray = $data['category'];
-                $category = new Category(
-                    $categoryArray['catId'],
-                    $categoryArray['catName'],
-                    $categoryArray['catDescription']
-                );
+                $category = Category::createFromObject($data['category']);
 
                 $result = $this->categoryManager->updateCategory($category);
 
@@ -66,7 +69,11 @@ class CategoryController {
         }
     }
 
-    public function deleteCategory($catId) {
+    /**
+     * @throws Exception
+     */
+    public function deleteCategory($catId): void
+    {
         $result = $this->categoryManager->deleteCategory($catId);
 
         if ($result) {
@@ -76,13 +83,11 @@ class CategoryController {
         }
     }
 
-    public function getAllCategories() {
+    public function getAllCategories(): void
+    {
         $categories = $this->categoryManager->getAllCategories();
-        $categoryArray = [];
-        foreach ($categories as $category) {
-            $categoryArray[] = $category->toArray();
-        }
-        echo json_encode($categoryArray);
+
+        echo json_encode(array_map(function($category) { return $category->toArray(); }, $categories));
     }
 }
 
@@ -90,31 +95,38 @@ if (isset($_GET['action'])) {
     $controller = new CategoryController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createCategory();
-            break;
-        case 'read':
-            if (isset($_GET['catId'])) {
-                $controller->getCategoryById(intval($_GET['catId']));
-            }
-            break;
-        case 'update':
-            $controller->updateCategory();
-            break;
-        case 'delete':
-            if (isset($_GET['catId'])) {
-                $controller->deleteCategory(intval($_GET['catId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllCategories();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createCategory();
+                break;
+            case 'read':
+                if (isset($_GET['catId'])) {
+                    $controller->getCategoryById(intval($_GET['catId']));
+                }
+                break;
+            case 'update':
+                $controller->updateCategory();
+                break;
+            case 'delete':
+                if (isset($_GET['catId'])) {
+                    $controller->deleteCategory(intval($_GET['catId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllCategories();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>
+

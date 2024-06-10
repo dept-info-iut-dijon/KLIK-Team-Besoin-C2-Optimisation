@@ -3,101 +3,117 @@
 require_once '../data/interface/userDAOInterface.php';
 require_once '../model/user.php';
 require_once '../database.php';
+
 class UserDAO implements UserDAOInterface {
-    private $pdo;
+    private Database $db;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(User $user): bool {
-        $sql = "INSERT INTO Users (user_level, user_first_name, user_last_name, username, user_email, user_password_hash, user_gender, user_headline, user_bio, user_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $user->getUserLevel(),
-            $user->getUserFirstName(),
-            $user->getUserLastName(),
-            $user->getUsername(),
-            $user->getUserEmail(),
-            $user->getUserPasswordHash(),
-            $user->getUserGender(),
-            $user->getUserHeadline(),
-            $user->getUserBio(),
-            $user->getUserImage()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function read(int $userId): ?User {
-        $sql = "SELECT * FROM Users WHERE user_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$userId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        try
+        {
+            $params = [
+                $user->getUserLevel(),
+                $user->getUserFirstName(),
+                $user->getUserLastName(),
+                $user->getUsername(),
+                $user->getUserEmail(),
+                $user->getUserPasswordHash(),
+                $user->getUserGender(),
+                $user->getUserHeadline(),
+                $user->getUserBio(),
+                $user->getUserImage()
+            ];
+            $sql = "INSERT INTO Users (user_level, user_first_name, user_last_name, username, user_email, user_password_hash, user_gender, user_headline, user_bio, user_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        if ($row) {
-            return new User(
-                $row['user_id'],
-                $row['user_level'],
-                $row['user_first_name'],
-                $row['user_last_name'],
-                $row['username'],
-                $row['user_email'],
-                "",
-                $row['user_gender'],
-                $row['user_headline'],
-                $row['user_bio'],
-                $row['user_img']
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return null;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
+    public function read(int $userId): User {
+        $result = $this->db->query("SELECT * FROM Users WHERE user_id = :user_id", [":user_id" => $userId]);
+
+        if(count($result) === 0)
+            throw new Exception("User not found");
+
+        return User::createFromDb($result[0]);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function update(User $user): bool {
-        $sql = "UPDATE Users SET user_level = ?, user_first_name = ?, user_last_name = ?, username = ?, user_email = ?, user_password_hash = ?, user_gender = ?, user_headline = ?, user_bio = ?, user_img = ? WHERE user_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $user->getUserLevel(),
-            $user->getUserFirstName(),
-            $user->getUserLastName(),
-            $user->getUsername(),
-            $user->getUserEmail(),
-            $user->getUserPasswordHash(),
-            $user->getUserGender(),
-            $user->getUserHeadline(),
-            $user->getUserBio(),
-            $user->getUserImage(),
-            $user->getUserId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $user->getUserLevel(),
+                $user->getUserFirstName(),
+                $user->getUserLastName(),
+                $user->getUsername(),
+                $user->getUserEmail(),
+                $user->getUserPasswordHash(),
+                $user->getUserGender(),
+                $user->getUserHeadline(),
+                $user->getUserBio(),
+                $user->getUserImage(),
+                $user->getUserId()
+            ];
+            $sql = "UPDATE Users SET user_level = ?, user_first_name = ?, user_last_name = ?, username = ?, user_email = ?, user_password_hash = ?, user_gender = ?, user_headline = ?, user_bio = ?, user_img = ? WHERE user_id = ?";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function delete(int $userId): bool {
-        $sql = "DELETE FROM Users WHERE user_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$userId]);
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Users WHERE user_id = ?", [":user_id" => $userId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
     public function getAll(): array {
-        $sql = "SELECT * FROM Users";
-        $stmt = $this->pdo->query($sql);
-        $users = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = new User(
-                $row['user_id'],
-                $row['user_level'],
-                $row['user_first_name'],
-                $row['user_last_name'],
-                $row['username'],
-                $row['user_email'],
-                "",
-                $row['user_gender'],
-                $row['user_headline'],
-                $row['user_bio'],
-                $row['user_img']
-            );
-            $users[] = $user;
+        $users = $this->db->query("SELECT * FROM Users");
 
-        }
-
-
-        return $users;
+        return array_map(function($item) { return User::createFromDb($item); }, $users);
     }
 }

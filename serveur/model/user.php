@@ -13,18 +13,18 @@ class User {
     private string $userBio;
     private string $userImage;
 
-    public function __construct(int $userId, int $userLevel, string $userFirstName, string $userLastName, string $username, string $userEmail, string $userPassword, string $userGender, string $userHeadline, string $userBio, string $userImage) {
-        $this->userId = $userId;
-        $this->userLevel = $userLevel;
-        $this->userFirstName = $userFirstName;
-        $this->userLastName = $userLastName;
-        $this->username = $username;
-        $this->userEmail = $userEmail;
-        $this->userPassword = $userPassword;
-        $this->userGender = $userGender;
-        $this->userHeadline = $userHeadline;
-        $this->userBio = $userBio;
-        $this->userImage = $userImage;
+    public function __construct() {
+        $this->userId = 0;
+        $this->userLevel = 0;
+        $this->userFirstName = "";
+        $this->userLastName = "";
+        $this->username = "";
+        $this->userEmail = "";
+        $this->userPassword = "";
+        $this->userGender = "";
+        $this->userHeadline = "";
+        $this->userBio = "";
+        $this->userImage = "";
     }
 
     // Getters
@@ -134,19 +134,39 @@ class User {
         ];
     }
 
-    public static function createFromObject(object $data): User {
-        $userId = $data->userId;
-        $userLevel = $data->userLevel;
-        $userFirstName = $data->userFirstName;
-        $userLastName = $data->userLastName;
-        $username = $data->username;
-        $userEmail = $data->userEmail;
-        $userPasswordHash = $data->userPasswordHash;
-        $userGender = $data->userGender;
-        $userHeadline = $data->userHeadline;
-        $userBio = $data->userBio;
-        $userImage = $data->userImage;
+    public static function createFromObject($obj): User {
+        $user = new User();
 
-        return new self($userId, $userLevel, $userFirstName, $userLastName, $username, $userEmail, $userPasswordHash, $userGender, $userHeadline, $userBio, $userImage);
+        $user->setUserId($obj->userId);
+        $user->setUserLevel($obj->userLevel);
+        $user->setUserFirstName($obj->userFirstName);
+        $user->setUserLastName($obj->userLastName);
+        $user->setUsername($obj->username);
+        $user->setUserEmail($obj->userEmail);
+        $user->setUserPasswordHash($obj->userPassword);
+        $user->setUserGender($obj->userGender);
+        $user->setUserHeadline($obj->userHeadline);
+        $user->setUserBio($obj->userBio);
+        $user->setUserImage($obj->userImage);
+
+        return $user;
+    }
+
+    public static function createFromDb($array): User {
+        $user = new User();
+
+        $user->setUserId($array["user_id"]);
+        $user->setUserLevel($array["user_level"]);
+        $user->setUserFirstName($array["user_first_name"]);
+        $user->setUserLastName($array["user_last_name"]);
+        $user->setUsername($array["username"]);
+        $user->setUserEmail($array["user_email"]);
+        $user->setUserPasswordHash($array["user_password_hash"]);
+        $user->setUserGender($array["user_gender"]);
+        $user->setUserHeadline($array["user_headline"]);
+        $user->setUserBio($array["user_bio"]);
+        $user->setUserImage($array["user_img"]);
+
+        return $user;
     }
 }

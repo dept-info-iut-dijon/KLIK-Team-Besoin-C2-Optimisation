@@ -10,77 +10,138 @@ require_once 'postDAO.php';
 require_once '../model/post.php';
 
 class PostVoteDAO implements PostVoteDAOInterface {
-    private $pdo;
+    private Database $db;
+    private UserDAO $userDAO;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
+        $this->userDAO = new UserDAO();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(PostVote $postVote): bool {
-        $sql = "INSERT INTO Post_Votes (post_Vote_date, post_Vote, post_id, user_id) VALUES (?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $postVote->getPostVoteDate()->format('Y-m-d'),
-            $postVote->getPostVote(),
-            $postVote->getPostId(),
-            $postVote->getUser()->getUserId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $postVote->getPostVoteDate()->format('Y-m-d'),
+                $postVote->getPostVote(),
+                $postVote->getPostId(),
+                $postVote->getPostVoteUser()->getUserId()
+            ];
+            $sql = "INSERT INTO Post_Votes (post_Vote_date, post_Vote, post_id, user_id) VALUES (?, ?, ?, ?)";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function read(int $postVoteId): ?PostVote {
-        $sql = "SELECT * FROM Post_Votes WHERE post_Vote_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$postVoteId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->db->query("SELECT * FROM Post_Votes WHERE post_Vote_id = ?", [$postVoteId]);
 
-        if ($row) {
-            $userDAO = new UserDAO();
-            $user = $userDAO->read($row['user_id']);
-            return new PostVote(
-                $row['post_Vote_id'],
-                new DateTime($row['post_Vote_date']),
-                $row['post_Vote'],
-                $row['post_id'],
-                $user
-            );
-        }
-        return null;
+        if(count($result) === 0)
+            throw new Exception("PostVote not found");
+
+        $user = $this->userDAO->read($result[0]["user_id"]);
+
+        $postVote = PostVote::createFromDb($result[0]);
+        $postVote->setPostVoteUser($user);
+
+        return $postVote;
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(PostVote $postVote): bool {
-        $sql = "UPDATE Post_Votes SET post_Vote_date = ?, post_Vote = ?, post_id = ?, user_id = ? WHERE post_Vote_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $postVote->getPostVoteDate()->format('Y-m-d'),
-            $postVote->getPostVote(),
-            $postVote->getPostId(),
-            $postVote->getUser()->getUserId(),
-            $postVote->getPostVoteId()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function delete(int $postVoteId): bool {
-        $sql = "DELETE FROM Post_Votes WHERE post_Vote_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$postVoteId]);
-    }
+        try
+        {
+            $params = [
+                $postVote->getPostVoteDate()->format('Y-m-d'),
+                $postVote->getPostVote(),
+                $postVote->getPostId(),
+                $postVote->getPostVoteUser()->getUserId(),
+                $postVote->getPostVoteId()
+            ];
+            $sql = "UPDATE Post_Votes SET post_Vote_date = ?, post_Vote = ?, post_id = ?, user_id = ? WHERE post_Vote_id = ?";
 
-    public function getAll(): array {
-        $sql = "SELECT * FROM Post_Votes";
-        $stmt = $this->pdo->query($sql);
-        $postVotes = [];
-        $postDAO = new PostDAO();
-        $userDAO = new UserDAO();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = $userDAO->read($row['user_id']);
-            $postVotes[] = new PostVote(
-                $row['post_Vote_id'],
-                new DateTime($row['post_Vote_date']),
-                $row['post_Vote'],
-                $row['post_id'],
-                $user
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return $postVotes;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(int $postVoteId): bool {
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Post_Votes WHERE post_Vote_id = ?", [$postVoteId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getAll(): array {
+        $postVotes = $this->db->query("SELECT * FROM Post_Votes");
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $postVote = PostVote::createFromDb($item);
+            $postVote->setPostVoteUser($user);
+
+            return $postVote;
+        }, $postVotes);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getPostVoteByPost(int $postId): array
+    {
+        $result = $this->db->query("SELECT * FROM Post_Votes WHERE post_id = ?", [$postId]);
+
+        return array_map(function ($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $postVote = PostVote::createFromDb($item);
+            $postVote->setPostVoteUser($user);
+
+            return $postVote;
+        }, $result);
     }
 }

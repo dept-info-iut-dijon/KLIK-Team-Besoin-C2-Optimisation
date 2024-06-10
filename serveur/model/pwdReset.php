@@ -7,12 +7,12 @@ class PwdReset {
     private string $resetToken;
     private string $resetExpires;
 
-    public function __construct(int $resetId, string $resetEmail, string $resetSelector, string $resetToken, string $resetExpires) {
-        $this->resetId = $resetId;
-        $this->resetEmail = $resetEmail;
-        $this->resetSelector = $resetSelector;
-        $this->resetToken = $resetToken;
-        $this->resetExpires = $resetExpires;
+    public function __construct() {
+        $this->resetId = 0;
+        $this->resetEmail = "";
+        $this->resetSelector = "";
+        $this->resetToken = "";
+        $this->resetExpires = "";
     }
 
     // Getters
@@ -65,5 +65,29 @@ class PwdReset {
             'resetToken' => $this->resetToken,
             'resetExpires' => $this->resetExpires
         ];
+    }
+
+    public static function createFromObject($obj): PwdReset {
+        $pwdReset = new PwdReset();
+
+        $pwdReset->setResetId($obj->resetId);
+        $pwdReset->setResetEmail($obj->resetEmail);
+        $pwdReset->setResetSelector($obj->resetSelector);
+        $pwdReset->setResetToken($obj->resetToken);
+        $pwdReset->setResetExpires($obj->resetExpires);
+
+        return $pwdReset;
+    }
+
+    public static function createFromDb($obj): PwdReset {
+        $pwdReset = new PwdReset();
+
+        $pwdReset->setResetId($obj["reset_id"]);
+        $pwdReset->setResetEmail($obj["reset_email"]);
+        $pwdReset->setResetSelector($obj["reset_selector"]);
+        $pwdReset->setResetToken($obj["reset_token"]);
+        $pwdReset->setResetExpires($obj["reset_expires"]);
+
+        return $pwdReset;
     }
 }

@@ -10,17 +10,17 @@ class Event {
     private string $eventImg;
     private string $eventHeadline;
     private string $eventDescription;
-    private User $user;
+    private User $eventUser;
 
-    public function __construct(int $eventId, string $eventTitle, DateTime $eventDateCreated, DateTime $eventDate, string $eventImg, string $eventHeadline, string $eventDescription, User $user) {
-        $this->eventId = $eventId;
-        $this->eventTitle = $eventTitle;
-        $this->eventDateCreated = $eventDateCreated;
-        $this->eventDate = $eventDate;
-        $this->eventImg = $eventImg;
-        $this->eventHeadline = $eventHeadline;
-        $this->eventDescription = $eventDescription;
-        $this->user = $user;
+    public function __construct() {
+        $this->eventId = 0;
+        $this->eventTitle = "";
+        $this->eventDateCreated = new DateTime();
+        $this->eventDate = new DateTime();
+        $this->eventImg = "";
+        $this->eventHeadline = "";
+        $this->eventDescription = "";
+        $this->eventUser = new User();
     }
 
     // Getters
@@ -52,8 +52,8 @@ class Event {
         return $this->eventDescription;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getEventUser(): User {
+        return $this->eventUser;
     }
 
     // Setters
@@ -85,8 +85,8 @@ class Event {
         $this->eventDescription = $eventDescription;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setEventUser(User $user): void {
+        $this->eventUser = $user;
     }
 
     public function toArray(): array {
@@ -98,7 +98,36 @@ class Event {
             'eventImg' => $this->eventImg,
             'eventHeadline' => $this->eventHeadline,
             'eventDescription' => $this->eventDescription,
-            'user' => $this->user->toArray() // Appel de la méthode toArray de l'objet complexe User
+            'eventUser' => $this->eventUser->toArray() // Appel de la méthode toArray de l'objet complexe User
         ];
+    }
+
+    public static function createFromObject($obj): Event {
+        $event = new Event();
+
+        $event->setEventId($obj->eventId);
+        $event->setEventTitle($obj->eventTitle);
+        $event->setEventDateCreated(new DateTime($obj->eventDateCreated));
+        $event->setEventDate(new DateTime($obj->eventDate));
+        $event->setEventImg($obj->eventImage);
+        $event->setEventHeadline($obj->eventHeadline);
+        $event->setEventDescription($obj->eventDescription);
+        $event->setEventUser(User::createFromObject($obj->eventUser));
+
+        return $event;
+    }
+
+    public static function createFromDb($array): Event {
+        $event = new Event();
+
+        $event->setEventId($array["event_id"]);
+        $event->setEventTitle($array["event_title"]);
+        $event->setEventDateCreated(new DateTime($array["event_date_created"]));
+        $event->setEventDate(new DateTime($array["event_date"]));
+        $event->setEventImg($array["event_img"]);
+        $event->setEventHeadline($array["event_headline"]);
+        $event->setEventDescription($array["event_description"]);
+
+        return $event;
     }
 }

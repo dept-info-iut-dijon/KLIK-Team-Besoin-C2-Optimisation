@@ -6,15 +6,15 @@ class Message {
     private int $messageId;
     private string $messageContent;
     private DateTime $messageDate;
-    private Conversation $conversation;
-    private User $user;
+    private int $conversationId;
+    private User $messageUser;
 
-    public function __construct(int $messageId, string $messageContent, DateTime $messageDate, Conversation $conversation, User $user) {
-        $this->messageId = $messageId;
-        $this->messageContent = $messageContent;
-        $this->messageDate = $messageDate;
-        $this->conversation = $conversation;
-        $this->user = $user;
+    public function __construct() {
+        $this->messageId = 0;
+        $this->messageContent = "";
+        $this->messageDate = new DateTime();
+        $this->conversationId = 0;
+        $this->messageUser = new User();
     }
 
     // Getters
@@ -30,12 +30,12 @@ class Message {
         return $this->messageDate;
     }
 
-    public function getConversation(): Conversation {
-        return $this->conversation;
+    public function getConversationId(): int {
+        return $this->conversationId;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getMessageUser(): User {
+        return $this->messageUser;
     }
 
     // Setters
@@ -51,12 +51,12 @@ class Message {
         $this->messageDate = $messageDate;
     }
 
-    public function setConversation(Conversation $conversation): void {
-        $this->conversation = $conversation;
+    public function setConversationId(int $conversationId): void {
+        $this->conversationId = $conversationId;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setMessageUser(User $user): void {
+        $this->messageUser = $user;
     }
 
     public function toArray(): array {
@@ -64,8 +64,31 @@ class Message {
             'messageId' => $this->messageId,
             'messageContent' => $this->messageContent,
             'messageDate' => $this->messageDate->format('Y-m-d H:i:s'),
-            'conversation' => $this->conversation->toArray(), 
-            'user' => $this->user->toArray() 
+            'conversationId' => $this->conversationId,
+            'messageUser' => $this->messageUser->toArray()
         ];
+    }
+
+    public static function createFromObject($obj): Message {
+        $message = new Message();
+
+        $message->setMessageId($obj->messageId);
+        $message->setMessageContent($obj->messageContent);
+        $message->setMessageDate(new DateTime($obj->messageDate));
+        $message->setConversationId($obj->conversationId);
+        $message->setMessageUser(User::createFromObject($obj->messageUser));
+
+        return $message;
+    }
+
+    public static function createFromDb($array): Message {
+        $message = new Message();
+
+        $message->setMessageId($array["message_id"]);
+        $message->setMessageContent($array["message_content"]);
+        $message->setMessageDate(new DateTime($array["message_date"]));
+        $message->setConversationId($array["conversation_id"]);
+
+        return $message;
     }
 }

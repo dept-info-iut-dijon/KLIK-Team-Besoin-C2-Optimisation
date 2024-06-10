@@ -11,18 +11,15 @@ class PostVoteController {
         $this->postVoteManager = new PostVoteManager();
     }
 
-    public function createPostVote() {
+    /**
+     * @throws Exception
+     */
+    public function createPostVote(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['postVote'])) {
-                $postVoteArray = $data['postVote'];
-                $postVote = new PostVote(
-                    0, 
-                    new DateTime($postVoteArray['postVoteDate']),
-                    $postVoteArray['postVote'],
-                    (new PostDAO())->read($postVoteArray['postId']),
-                    (new UserDAO())->read($postVoteArray['userId'])
-                );
+                $postVote = PostVote::createFromObject($data['postVote']);
 
                 $result = $this->postVoteManager->createPostVote($postVote);
 
@@ -37,8 +34,13 @@ class PostVoteController {
         }
     }
 
-    public function getPostVoteById($postVoteId) {
+    /**
+     * @throws Exception
+     */
+    public function getPostVoteById($postVoteId): void
+    {
         $postVote = $this->postVoteManager->getPostVoteById($postVoteId);
+
         if ($postVote) {
             echo json_encode($postVote->toArray());
         } else {
@@ -46,18 +48,15 @@ class PostVoteController {
         }
     }
 
-    public function updatePostVote() {
+    /**
+     * @throws Exception
+     */
+    public function updatePostVote(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['postVote'])) {
-                $postVoteArray = $data['postVote'];
-                $postVote = new PostVote(
-                    $postVoteArray['postVoteId'],
-                    new DateTime($postVoteArray['postVoteDate']),
-                    $postVoteArray['postVote'],
-                    (new PostDAO())->read($postVoteArray['postId']),
-                    (new UserDAO())->read($postVoteArray['userId'])
-                );
+                $postVote = PostVote::createFromObject($data['postVote']);
 
                 $result = $this->postVoteManager->updatePostVote($postVote);
 
@@ -72,7 +71,11 @@ class PostVoteController {
         }
     }
 
-    public function deletePostVote($postVoteId) {
+    /**
+     * @throws Exception
+     */
+    public function deletePostVote($postVoteId): void
+    {
         $result = $this->postVoteManager->deletePostVote($postVoteId);
 
         if ($result) {
@@ -82,13 +85,14 @@ class PostVoteController {
         }
     }
 
-    public function getAllPostVotes() {
+    /**
+     * @throws Exception
+     */
+    public function getAllPostVotes(): void
+    {
         $postVotes = $this->postVoteManager->getAllPostVotes();
-        $postVotesArray = [];
-        foreach ($postVotes as $postVote) {
-            $postVotesArray[] = $postVote->toArray();
-        }
-        echo json_encode($postVotesArray);
+
+        echo json_encode(array_map(function($postVote) { return $postVote->toArray(); }, $postVotes));
     }
 }
 
@@ -96,31 +100,37 @@ if (isset($_GET['action'])) {
     $controller = new PostVoteController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createPostVote();
-            break;
-        case 'read':
-            if (isset($_GET['postVoteId'])) {
-                $controller->getPostVoteById(intval($_GET['postVoteId']));
-            }
-            break;
-        case 'update':
-            $controller->updatePostVote();
-            break;
-        case 'delete':
-            if (isset($_GET['postVoteId'])) {
-                $controller->deletePostVote(intval($_GET['postVoteId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllPostVotes();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createPostVote();
+                break;
+            case 'read':
+                if (isset($_GET['postVoteId'])) {
+                    $controller->getPostVoteById(intval($_GET['postVoteId']));
+                }
+                break;
+            case 'update':
+                $controller->updatePostVote();
+                break;
+            case 'delete':
+                if (isset($_GET['postVoteId'])) {
+                    $controller->deletePostVote(intval($_GET['postVoteId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllPostVotes();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>

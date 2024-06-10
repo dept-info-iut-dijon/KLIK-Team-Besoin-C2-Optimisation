@@ -3,76 +3,141 @@
 require_once '../data/interface/pollOptionInterface.php';
 require_once '../model/pollOption.php';
 
-require_once 'pollDAO.php';
+require_once 'pollVoteDAO.php';
 require_once '../model/poll.php';
 
 class PollOptionDAO implements PollOptionDAOInterface {
-    private $pdo;
+    private Database $db;
+    private PollVoteDAO $pollVoteDAO;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
+        $this->pollVoteDAO = new PollVoteDAO();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(PollOption $pollOption): bool {
-        $sql = "INSERT INTO Poll_Options (poll_Option_name, poll_Option_status, poll_id) VALUES (?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $pollOption->getPollOptionName(),
-            $pollOption->getPollOptionStatus(),
-            $pollOption->getPoll()->getPollId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $pollOption->getPollOptionName(),
+                $pollOption->getPollOptionStatus(),
+                $pollOption->getPollId()
+            ];
+            $sql = "INSERT INTO Poll_Options (poll_Option_name, poll_Option_status, poll_id) VALUES (?, ?, ?)";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function read(int $pollOptionId): ?PollOption {
-        $sql = "SELECT * FROM Poll_Options WHERE poll_Option_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$pollOptionId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $this->db->query("SELECT * FROM Poll_Options WHERE poll_Option_id = ?", [$pollOptionId]);
 
-        if ($row) {
-            $pollDAO = new PollDAO();
-            $poll = $pollDAO->read($row['poll_id']);
-            return new PollOption(
-                $row['poll_Option_id'],
-                $row['poll_Option_name'],
-                $row['poll_Option_status'],
-                $poll
-            );
-        }
-        return null;
+        if(count($result) === 0)
+            throw new Exception("PollOption not found");
+
+        $pollVotes = $this->pollVoteDAO->getPollVoteByPollOption($result[0]["poll_Option_id"]);
+
+        $pollOption = PollOption::createFromDb($result[0]);
+        $pollOption->setPollVotes($pollVotes);
+
+        return $pollOption;
     }
 
+    /**
+     * @throws Exception
+     */
     public function update(PollOption $pollOption): bool {
-        $sql = "UPDATE Poll_Options SET poll_Option_name = ?, poll_Option_status = ?, poll_id = ? WHERE poll_Option_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $pollOption->getPollOptionName(),
-            $pollOption->getPollOptionStatus(),
-            $pollOption->getPoll()->getPollId(),
-            $pollOption->getPollOptionId()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function delete(int $pollOptionId): bool {
-        $sql = "DELETE FROM Poll_Options WHERE poll_Option_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$pollOptionId]);
-    }
+        try
+        {
+            $params = [
+                $pollOption->getPollOptionName(),
+                $pollOption->getPollOptionStatus(),
+                $pollOption->getPollId(),
+                $pollOption->getPollOptionId()
+            ];
+            $sql = "UPDATE Poll_Options SET poll_Option_name = ?, poll_Option_status = ?, poll_id = ? WHERE poll_Option_id = ?";
 
-    public function getAll(): array {
-        $sql = "SELECT * FROM Poll_Options";
-        $stmt = $this->pdo->query($sql);
-        $pollOptions = [];
-        $pollDAO = new PollDAO();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $poll = $pollDAO->read($row['poll_id']);
-            $pollOptions[] = new PollOption(
-                $row['poll_Option_id'],
-                $row['poll_Option_name'],
-                $row['poll_Option_status'],
-                $poll
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return $pollOptions;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function delete(int $pollOptionId): bool {
+        $this->db->beginTransaction();
+
+        try
+        {
+            $this->db->query("DELETE FROM Poll_Options WHERE poll_Option_id = ?", [$pollOptionId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     */
+    public function getAll(): array {
+        $pollOptions = $this->db->query("SELECT * FROM Poll_Options");
+
+        return array_map(function($item) {
+            $pollVotes = $this->pollVoteDAO->getPollVoteByPollOption($item["poll_Option_id"]);
+
+            $pollOption = PollOption::createFromDb($item);
+            $pollOption->setPollVotes($pollVotes);
+
+            return $pollOption;
+        }, $pollOptions);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getPollOptionsByPoll(int $pollId): array
+    {
+        $result = $this->db->query("SELECT * FROM Poll_Options WHERE poll_id = ?", [$pollId]);
+
+        return array_map(function($item) {
+            $pollVotes = $this->pollVoteDAO->getPollVoteByPollOption($item["poll_Option_id"]);
+
+            $pollOption = PollOption::createFromDb($item);
+            $pollOption->setPollVotes($pollVotes);
+
+            return $pollOption;
+        }, $result);
     }
 }

@@ -5,64 +5,99 @@ require_once '../model/category.php';
 require_once '../database.php';
 
 class CategoryDAO implements CategoryDAOInterface {
-    private $pdo;
+    private Database $db;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(Category $category): bool {
-        $sql = "INSERT INTO Categories (cat_name, cat_description) VALUES (?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $category->getCatName(),
-            $category->getCatDescription()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function read(int $catId): ?Category {
-        $sql = "SELECT * FROM Categories WHERE cat_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$catId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        try
+        {
+            $params = [
+                $category->getCatName(),
+                $category->getCatDescription()
+            ];
+            $sql = "INSERT INTO Categories (cat_name, cat_description) VALUES (?, ?)";
 
-        if ($row) {
-            return new Category(
-                $row['cat_id'],
-                $row['cat_name'],
-                $row['cat_description']
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return null;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
+    public function read(int $catId): Category {
+        $result = $this->db->query("SELECT * FROM Categories WHERE cat_id = :cat_id", [":cat_id" => $catId]);
+
+        if(count($result) === 0)
+            throw new Exception("Category not found");
+
+        return Category::createFromDb($result[0]);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function update(Category $category): bool {
-        $sql = "UPDATE Categories SET cat_name = ?, cat_description = ? WHERE cat_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $category->getCatName(),
-            $category->getCatDescription(),
-            $category->getCatId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                $category->getCatName(),
+                $category->getCatDescription(),
+                $category->getCatId()
+            ];
+            $sql = "UPDATE Categories SET cat_name = ?, cat_description = ? WHERE cat_id = ?";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function delete(int $catId): bool {
-        $sql = "DELETE FROM Categories WHERE cat_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$catId]);
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Categories WHERE cat_id = :cat_id", [":cat_id" => $catId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
     public function getAll(): array {
-        $sql = "SELECT * FROM Categories";
-        $stmt = $this->pdo->query($sql);
-        $categories = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $categories[] = new Category(
-                $row['cat_id'],
-                $row['cat_name'],
-                $row['cat_description']
-            );
-        }
-        return $categories;
+        $categories = $this->db->query("SELECT * FROM Categories");
+
+        return array_map(function($item) { return Category::createFromDb($item); }, $categories);
     }
 }

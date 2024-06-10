@@ -11,18 +11,15 @@ class BlogVoteController {
         $this->blogVoteManager = new BlogVoteManager();
     }
 
-    public function createBlogVote() {
+    /**
+     * @throws Exception
+     */
+    public function createBlogVote(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['blogVote'])) {
-                $blogVoteArray = $data['blogVote'];
-                $blogVote = new BlogVote(
-                    0, 
-                    new DateTime($blogVoteArray['blogVoteDate']),
-                    $blogVoteArray['blogVote'],
-                    (new UserDAO())->read($blogVoteArray['userId']),
-                    (new BlogDAO())->read($blogVoteArray['blogId'])
-                );
+                $blogVote = BlogVote::createFromObject($data['blogVote']);
 
                 $result = $this->blogVoteManager->createBlogVote($blogVote);
 
@@ -37,7 +34,11 @@ class BlogVoteController {
         }
     }
 
-    public function getBlogVoteById($blogVoteId) {
+    /**
+     * @throws Exception
+     */
+    public function getBlogVoteById($blogVoteId): void
+    {
         $blogVote = $this->blogVoteManager->getBlogVoteById($blogVoteId);
         if ($blogVote) {
             echo json_encode($blogVote->toArray());
@@ -46,18 +47,15 @@ class BlogVoteController {
         }
     }
 
-    public function updateBlogVote() {
+    /**
+     * @throws Exception
+     */
+    public function updateBlogVote(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['blogVote'])) {
-                $blogVoteArray = $data['blogVote'];
-                $blogVote = new BlogVote(
-                    $blogVoteArray['blogVoteId'],
-                    new DateTime($blogVoteArray['blogVoteDate']),
-                    $blogVoteArray['blogVote'],
-                    (new UserDAO())->read($blogVoteArray['userId']),
-                    (new BlogDAO())->read($blogVoteArray['blogId'])
-                );
+                $blogVote = BlogVote::createFromObject($data['blogVote']);
 
                 $result = $this->blogVoteManager->updateBlogVote($blogVote);
 
@@ -72,7 +70,11 @@ class BlogVoteController {
         }
     }
 
-    public function deleteBlogVote($blogVoteId) {
+    /**
+     * @throws Exception
+     */
+    public function deleteBlogVote($blogVoteId): void
+    {
         $result = $this->blogVoteManager->deleteBlogVote($blogVoteId);
 
         if ($result) {
@@ -82,13 +84,11 @@ class BlogVoteController {
         }
     }
 
-    public function getAllBlogVotes() {
+    public function getAllBlogVotes(): void
+    {
         $blogVotes = $this->blogVoteManager->getAllBlogVotes();
-        $blogVote = [];
-        foreach ($blogVotes as $blogVote) {
-            $blogVote[] = $blogVote->toArray();
-        }
-        echo json_encode($blogVotes);
+
+        echo json_encode(array_map(function($globVote) { return $globVote->toArray(); }, $blogVotes));
     }
 }
 
@@ -96,31 +96,37 @@ if (isset($_GET['action'])) {
     $controller = new BlogVoteController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createBlogVote();
-            break;
-        case 'read':
-            if (isset($_GET['blogVoteId'])) {
-                $controller->getBlogVoteById(intval($_GET['blogVoteId']));
-            }
-            break;
-        case 'update':
-            $controller->updateBlogVote();
-            break;
-        case 'delete':
-            if (isset($_GET['blogVoteId'])) {
-                $controller->deleteBlogVote(intval($_GET['blogVoteId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllBlogVotes();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createBlogVote();
+                break;
+            case 'read':
+                if (isset($_GET['blogVoteId'])) {
+                    $controller->getBlogVoteById(intval($_GET['blogVoteId']));
+                }
+                break;
+            case 'update':
+                $controller->updateBlogVote();
+                break;
+            case 'delete':
+                if (isset($_GET['blogVoteId'])) {
+                    $controller->deleteBlogVote(intval($_GET['blogVoteId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllBlogVotes();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>
