@@ -13,15 +13,6 @@ export class BlogVote{
         this.blogVoteUser = new User();
     }
 
-    public static createFromObject(object: any): BlogVote{
-        const blogVote = new BlogVote();
-        blogVote.blogVoteId = object.blogVoteId;
-        blogVote.blogVoteDate = object.blogVoteDate;
-        blogVote.blogVote = object.blogVote;
-        blogVote.blogVoteUser = new User();
-        return blogVote;
-    }
-
     public get BlogVoteId(){
         return this.blogVoteId;
     }

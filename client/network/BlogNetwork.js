@@ -32,6 +32,29 @@ export default class BlogNetwork {
             }
         });
     }
+    updateBlog(blog) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield fetch('../serveur/controller/blogController.php?action=update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(blog),
+                });
+                if (!response.ok) {
+                    throw new Error(`Bad response from server: ${response.status}`);
+                }
+                const result = yield response.json();
+                console.log('Updated blog :', result);
+                return true;
+            }
+            catch (error) {
+                console.error('Error when updating blogs: ' + error.message);
+                return false;
+            }
+        });
+    }
     getAllBlogs() {
         return __awaiter(this, void 0, void 0, function* () {
             let result = new Array();
