@@ -1,21 +1,36 @@
 <?php
 
-require_once 'user.php';
+require_once 'User.php';
+require_once 'Message.php';
 
 class Conversation {
+    private array $messages;
+    private User $user1;
+    private User $user2;
     private int $conversationId;
     private DateTime $conversationDateCreation;
-    private array $members;
-    private array $messages;
 
     public function __construct() {
+        $this->messages = array();
+        $this->user1 = new User();
+        $this->user2 = new User();
         $this->conversationId = 0;
         $this->conversationDateCreation = new DateTime();
-        $this->members = array();
-        $this->messages = array();
     }
 
     // Getters
+    public function getMessages(): array {
+        return $this->messages;
+    }
+
+    public function getUser1(): User {
+        return $this->user1;
+    }
+
+    public function getUser2(): User {
+        return $this->user2;
+    }
+
     public function getConversationId(): int {
         return $this->conversationId;
     }
@@ -24,15 +39,19 @@ class Conversation {
         return $this->conversationDateCreation;
     }
 
-    public function getMembers(): array {
-        return $this->members;
-    }
-
-    public function getMessages(): array {
-        return $this->messages;
-    }
-
     // Setters
+    public function setMessages(array $messages): void {
+        $this->messages = $messages;
+    }
+
+    public function setUser1(User $user1): void {
+        $this->user1 = $user1;
+    }
+
+    public function setUser2(User $user2): void {
+        $this->user2 = $user2;
+    }
+
     public function setConversationId(int $conversationId): void {
         $this->conversationId = $conversationId;
     }
@@ -41,31 +60,25 @@ class Conversation {
         $this->conversationDateCreation = $conversationDateCreation;
     }
 
-    public function setMembers(array $members): void {
-        $this->members = $members;
-    }
-
-    public function setMessages(array $messages): void {
-        $this->messages = $messages;
-    }
 
     public function toArray(): array {
         return [
             'conversationId' => $this->conversationId,
-            'conversationDateCreation' => $this->conversationDateCreation->format('Y-m-d H:i:s'), // Formatage de la date en chaîne de caractères
-            'members' => array_map(function($member) { return $member->toArray(); }, $this->members),
+            'conversationDateCreation' => $this->conversationDateCreation->format('Y-m-d H:i:s'),
+            'user1' => $this->user1 ? $this->user1->toArray() : null,
+            'user2' => $this->user2 ? $this->user2->toArray() : null,
             'messages' => array_map(function($message) { return $message->toArray(); }, $this->messages)
         ];
     }
+
 
     public static function createFromObject($obj): Conversation {
         $conversation = new Conversation();
 
         $conversation->setConversationId($obj->conversationId);
         $conversation->setConversationDateCreation(new DateTime($obj->conversationDateCreation));
-        $conversation->setMembers(array_map(function($member) {
-            return User::createFromObject($member);
-        }, $obj->members));
+        $conversation->setUser1(User::createFromObject($obj->user1));
+        $conversation->setUser2(User::createFromObject($obj->user2));
         $conversation->setMessages(array_map(function($message) {
             return Message::createFromObject($message);
         }, $obj->messages));
@@ -73,11 +86,12 @@ class Conversation {
         return $conversation;
     }
 
+
     public static function createFromDb($array): Conversation {
         $conversation = new Conversation();
 
-        $conversation->setConversationId($array["conversation_id"]);
-        $conversation->setConversationDateCreation(new DateTime($array["conservation_date_creation"]));
+        $conversation->setConversationId($array['conversation_id']);
+        $conversation->setConversationDateCreation(new DateTime($array['conversation_date_creation']));
 
         return $conversation;
     }
