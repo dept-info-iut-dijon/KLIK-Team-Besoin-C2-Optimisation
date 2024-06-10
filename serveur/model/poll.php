@@ -9,7 +9,7 @@ class Poll {
     private DateTime $pollCreated;
     private DateTime $pollModified;
     private bool $pollStatus;
-    private string $pollDescription;
+    private string $pollDesc;
     private bool $pollLocked;
     private User $pollUser;
     private array $pollOptions;
@@ -20,7 +20,7 @@ class Poll {
         $this->pollCreated = new DateTime();
         $this->pollModified = new DateTime();
         $this->pollStatus = false;
-        $this->pollDescription = "";
+        $this->pollDesc = "";
         $this->pollLocked = false;
         $this->pollUser = new User();
         $this->pollOptions = array();
@@ -48,7 +48,7 @@ class Poll {
     }
 
     public function getPollDescription(): string {
-        return $this->pollDescription;
+        return $this->pollDesc;
     }
 
     public function getPollLocked(): bool {
@@ -85,7 +85,7 @@ class Poll {
     }
 
     public function setPollDescription(string $pollDescription): void {
-        $this->pollDescription = $pollDescription;
+        $this->pollDesc = $pollDescription;
     }
 
     public function setPollLocked(bool $pollLocked): void {
@@ -107,7 +107,7 @@ class Poll {
             'pollCreated' => $this->pollCreated->format('Y-m-d H:i:s'),
             'pollModified' => $this->pollModified->format('Y-m-d H:i:s'),
             'pollStatus' => $this->pollStatus,
-            'pollDescription' => $this->pollDescription,
+            'pollDesc' => $this->pollDesc,
             'pollLocked' => $this->pollLocked,
             'pollUser' => $this->pollUser->toArray(),
             'pollOptions' => array_map(function($pollOption) { return $pollOption->toArray(); }, $this->pollOptions)

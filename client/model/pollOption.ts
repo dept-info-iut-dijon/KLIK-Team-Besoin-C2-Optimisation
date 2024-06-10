@@ -4,45 +4,54 @@ import { PollVote } from "./pollVote.js";
 /**
  * Represents a poll option
  */
-export class PollOption{
+export class PollOption {
     private pollOptionId: number;
     private pollOptionName: string;
     private pollOptionStatus: boolean;
     private pollVotes: Array<PollVote>;
+    private pollId: number;
 
-    constructor(){
+    constructor() {
         this.pollOptionId = 0;
         this.pollOptionName = "";
         this.pollOptionStatus = false;
         this.pollVotes = new Array<PollVote>();
+        this.pollId = 0;
     }
 
-    public get PollOptionId(){
+    public get PollOptionId() {
         return this.pollOptionId;
     }
-    public set PollOptionId(value: number){
+    public set PollOptionId(value: number) {
         this.pollOptionId = value;
     }
 
-    public get PollOptionName(){
+    public get PollOptionName() {
         return this.pollOptionName;
     }
-    public set PollOptionName(value: string){
+    public set PollOptionName(value: string) {
         this.pollOptionName = value;
     }
 
-    public get PollOptionStatus(){
+    public get PollOptionStatus() {
         return this.pollOptionStatus;
     }
-    public set PollOptionStatus(value: boolean){
+    public set PollOptionStatus(value: boolean) {
         this.pollOptionStatus = value;
     }
 
-    public get PollVotes(){
+    public get PollVotes() {
         return this.pollVotes;
     }
-    public set PollVotes(value: Array<PollVote>){
+    public set PollVotes(value: Array<PollVote>) {
         this.pollVotes = value;
+    }
+
+    public get PollId() {
+        return this.pollId;
+    }
+    public set PollId(value: number) {
+        this.pollId = value;
     }
 
     public static createFromObject(obj: any): PollOption {
@@ -51,6 +60,7 @@ export class PollOption{
         pollOption.PollOptionName = obj.pollOptionName || "";
         pollOption.PollOptionStatus = obj.pollOptionStatus || false;
         pollOption.PollVotes = obj.pollVotes ? obj.pollVotes.map((vote: any) => PollVote.createFromObject(vote)) : new Array<PollVote>();
+        pollOption.PollId = obj.pollId || 0;
         return pollOption;
     }
 }

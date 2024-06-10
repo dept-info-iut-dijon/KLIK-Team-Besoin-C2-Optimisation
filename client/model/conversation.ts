@@ -1,9 +1,10 @@
 import { User } from "./user";
+import { Message } from "./message";
 
 
 
 
-class Conversation {
+export class Conversation {
     private messages: Array<Message>;
     private user1 : User;
     private user2 : User;
