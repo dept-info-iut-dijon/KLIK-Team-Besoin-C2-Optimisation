@@ -37,4 +37,13 @@ class Conversation {
         this.conversationId = 0;
         this.conversationDateCreation = new Date();
     }
+    static createFromObject(obj) {
+        const conversation = new Conversation();
+        conversation.ConversationId = obj.conversationId || 0;
+        conversation.ConversationDateCreation = obj.conversationDateCreation ? new Date(obj.conversationDateCreation) : new Date();
+        conversation.Messages = obj.messages ? obj.messages.map((message) => Message.createFromObject(message)) : new Array();
+        conversation.User1 = obj.user1 ? User.createFromObject(obj.user1) : new User();
+        conversation.User2 = obj.user2 ? User.createFromObject(obj.user2) : new User();
+        return conversation;
+    }
 }

@@ -1,3 +1,4 @@
+import { PollVote } from "./pollVote.js";
 /**
  * Represents a poll option
  */
@@ -31,5 +32,13 @@ export class PollOption {
     }
     set PollVotes(value) {
         this.pollVotes = value;
+    }
+    static createFromObject(obj) {
+        const pollOption = new PollOption();
+        pollOption.PollOptionId = obj.pollOptionId || 0;
+        pollOption.PollOptionName = obj.pollOptionName || "";
+        pollOption.PollOptionStatus = obj.pollOptionStatus || false;
+        pollOption.PollVotes = obj.pollVotes ? obj.pollVotes.map((vote) => PollVote.createFromObject(vote)) : new Array();
+        return pollOption;
     }
 }

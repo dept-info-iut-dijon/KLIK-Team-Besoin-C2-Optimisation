@@ -23,4 +23,11 @@ class Message {
         this.messageContent = "";
         this.messageDate = new Date();
     }
+    static createFromObject(obj) {
+        const message = new Message();
+        message.MessageId = obj.messageId || 0;
+        message.MessageContent = obj.messageContent || "";
+        message.MessageDate = obj.messageDate ? new Date(obj.messageDate) : new Date();
+        return message;
+    }
 }

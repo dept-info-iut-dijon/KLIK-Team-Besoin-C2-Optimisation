@@ -59,10 +59,15 @@ class Conversation {
         this.conversationDateCreation = new Date();
     }
 
-
-
-
-
+    public static createFromObject(obj: any): Conversation {
+        const conversation = new Conversation();
+        conversation.ConversationId = obj.conversationId || 0;
+        conversation.ConversationDateCreation = obj.conversationDateCreation ? new Date(obj.conversationDateCreation) : new Date();
+        conversation.Messages = obj.messages ? obj.messages.map((message: any) => Message.createFromObject(message)) : new Array<Message>();
+        conversation.User1 = obj.user1 ? User.createFromObject(obj.user1) : new User();
+        conversation.User2 = obj.user2 ? User.createFromObject(obj.user2) : new User();
+        return conversation;
+    }
 
 }
 

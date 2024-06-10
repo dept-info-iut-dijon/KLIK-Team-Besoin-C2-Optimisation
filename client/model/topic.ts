@@ -55,4 +55,14 @@ export class Topic {
         this.topicCategory = new Category();
         this.topicUser = new User();
     }
+
+    public static createFromObject(obj: any): Topic {
+        const topic = new Topic();
+        topic.TopicId = obj.topicId || 0;
+        topic.TopicSubject = obj.topicSubject || "";
+        topic.TopicDate = obj.topicDate ? new Date(obj.topicDate) : new Date();
+        topic.TopicCategory = obj.topicCategory ? Category.createFromObject(obj.topicCategory) : new Category();
+        topic.TopicUser = obj.topicUser ? User.createFromObject(obj.topicUser) : new User();
+        return topic;
+    }
 }

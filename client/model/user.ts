@@ -112,4 +112,21 @@ export class User {
         this.userBio = "";
         this.userImage = "";
     }
+
+
+    public static createFromObject(obj: any): User {
+        const user = new User();
+        user.UserId = obj.userId || 0;
+        user.UserLevel = obj.userLevel || 0;
+        user.UserFirstName = obj.userFirstName || "";
+        user.UserLastName = obj.userLastName || "";
+        user.Username = obj.username || "";
+        user.UserEmail = obj.userEmail || "";
+        user.UserPassword = obj.userPassword || "";
+        user.UserGender = obj.userGender || "";
+        user.UserHeadline = obj.userHeadline || "";
+        user.UserBio = obj.userBio || "";
+        user.UserImage = obj.userImage || "";
+        return user;
+    }
 }
