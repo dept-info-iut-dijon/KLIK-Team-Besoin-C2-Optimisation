@@ -108,7 +108,6 @@ class UserController
     }
 }
 
-// Example of routing mechanism
 if (isset($_GET['action'])) {
     $controller = new UserController();
     $action = $_GET['action'];
