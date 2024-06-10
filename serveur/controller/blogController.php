@@ -10,19 +10,15 @@ class BlogController {
         $this->blogManager = new BlogManager();
     }
 
-    public function createBlog() {
+    /**
+     * @throws Exception
+     */
+    public function createBlog(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['blog'])) {
-                $blogArray = $data['blog'];
-                $blog = new Blog(
-                    0, // Assuming 0 for new Blog ID
-                    $blogArray['blogTitle'],
-                    $blogArray['blogImg'],
-                    new DateTime($blogArray['blogDate']),
-                    $blogArray['blogContent'],
-                    (new UserDAO())->read($blogArray['userId'])
-                );
+                $blog = Blog::createFromObject($data['blog']);
 
                 $result = $this->blogManager->createBlog($blog);
 
@@ -37,7 +33,11 @@ class BlogController {
         }
     }
 
-    public function getBlogById($blogId) {
+    /**
+     * @throws Exception
+     */
+    public function getBlogById($blogId): void
+    {
         $blog = $this->blogManager->getBlogById($blogId);
         if ($blog) {
             echo json_encode($blog->toArray());
@@ -46,19 +46,15 @@ class BlogController {
         }
     }
 
-    public function updateBlog() {
+    /**
+     * @throws Exception
+     */
+    public function updateBlog(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['blog'])) {
-                $blogArray = $data['blog'];
-                $blog = new Blog(
-                    $blogArray['blogId'],
-                    $blogArray['blogTitle'],
-                    $blogArray['blogImg'],
-                    new DateTime($blogArray['blogDate']),
-                    $blogArray['blogContent'],
-                    (new UserDAO())->read($blogArray['userId'])
-                );
+                $blog = Blog::createFromObject($data['blog']);
 
                 $result = $this->blogManager->updateBlog($blog);
 
@@ -73,7 +69,11 @@ class BlogController {
         }
     }
 
-    public function deleteBlog($blogId) {
+    /**
+     * @throws Exception
+     */
+    public function deleteBlog($blogId): void
+    {
         $result = $this->blogManager->deleteBlog($blogId);
 
         if ($result) {
@@ -83,13 +83,14 @@ class BlogController {
         }
     }
 
-    public function getAllBlogs() {
+    /**
+     * @throws Exception
+     */
+    public function getAllBlogs(): void
+    {
         $blogs = $this->blogManager->getAllBlogs();
-        $blogArray = [];
-        foreach ($blogs as $blog) {
-            $blogArray[] = $blog->toArray();
-        }
-        echo(json_encode($blogArray));
+
+        echo json_encode(array_map(function($blog) { return $blog->toArray(); }, $blogs));
     }
 }
 
@@ -97,31 +98,39 @@ if (isset($_GET['action'])) {
     $controller = new BlogController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createBlog();
-            break;
-        case 'read':
-            if (isset($_GET['blogId'])) {
-                $controller->getBlogById(intval($_GET['blogId']));
-            }
-            break;
-        case 'update':
-            $controller->updateBlog();
-            break;
-        case 'delete':
-            if (isset($_GET['blogId'])) {
-                $controller->deleteBlog(intval($_GET['blogId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllBlogs();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createBlog();
+                break;
+            case 'read':
+                if (isset($_GET['blogId'])) {
+                    $controller->getBlogById(intval($_GET['blogId']));
+                }
+                break;
+            case 'update':
+                $controller->updateBlog();
+                break;
+            case 'delete':
+                if (isset($_GET['blogId'])) {
+                    $controller->deleteBlog(intval($_GET['blogId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllBlogs();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
     }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
+    }
+
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>
+

@@ -1,23 +1,22 @@
 <?php
 
 require_once 'user.php';
-require_once 'topic.php';
 
 class Post {
     private int $postId;
     private string $postContent;
     private DateTime $postDate;
-    private Topic $topic;
+    private int $topicId;
     private array $postVotes;
-    private User $user;
+    private User $postUser;
 
-    public function __construct(int $postId, string $postContent, DateTime $postDate, Topic $topic, array $postVotes, User $user) {
-        $this->postId = $postId;
-        $this->postContent = $postContent;
-        $this->postDate = $postDate;
-        $this->topic = $topic;
-        $this->postVotes = $postVotes;
-        $this->user = $user;
+    public function __construct() {
+        $this->postId = 0;
+        $this->postContent = "";
+        $this->postDate = new DateTime();
+        $this->topicId = 0;
+        $this->postVotes = array();
+        $this->postUser = new User();
     }
 
     // Getters
@@ -33,12 +32,12 @@ class Post {
         return $this->postDate;
     }
 
-    public function getTopic(): Topic {
-        return $this->topic;
+    public function getTopicId(): int {
+        return $this->topicId;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getPostUser(): User {
+        return $this->postUser;
     }
 
     public function getPostVotes(): array {
@@ -58,12 +57,12 @@ class Post {
         $this->postDate = $postDate;
     }
 
-    public function setTopic(Topic $topic): void {
-        $this->topic = $topic;
+    public function setTopicId(int $topicId): void {
+        $this->topicId = $topicId;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setPostUser(User $user): void {
+        $this->postUser = $user;
     }
 
     public function setPostVotes(array $postVotes): void{
@@ -75,20 +74,35 @@ class Post {
             'postId' => $this->postId,
             'postContent' => $this->postContent,
             'postDate' => $this->postDate->format('Y-m-d H:i:s'),
-            'topic' => $this->topic->toArray(),
-            'postVotes' => $this->postVotes,
-            'user' => $this->user->toArray()
+            'topicId' => $this->topicId,
+            'postVotes' => array_map(function($postVote) { return $postVote->toArray(); }, $this->postVotes),
+            'postUser' => $this->postUser->toArray()
         ];
     }
 
-    public static function createFromObject(object $data): Post {
-        $postId = $data->postId;
-        $postContent = $data->postContent;
-        $postDate = new DateTime($data->postDate);
-        $topic = Topic::createFromObject($data->topic); // Assurez-vous que la classe Topic a une méthode similaire
-        $postVotes = $data->postVotes;
-        $user = User::createFromObject($data->user); // Assurez-vous que la classe User a une méthode similaire
+    public static function createFromObject($obj): Post {
+        $post = new Post();
 
-        return new self($postId, $postContent, $postDate, $topic, $postVotes, $user);
+        $post->setPostId($obj->postId);
+        $post->setPostContent($obj->postContent);
+        $post->setPostDate(new DateTime($obj->postDate));
+        $post->setTopicId($obj->topicId);
+        $post->setPostVotes(array_map(function($postVote) {
+            return PostVote::createFromObject($postVote);
+        }, $obj->postVotes));
+        $post->setPostUser(User::createFromObject($obj->postUser));
+
+        return $post;
+    }
+
+    public static function createFromDb($array): Post {
+        $post = new Post();
+
+        $post->setPostId($array["post_id"]);
+        $post->setPostContent($array["post_content"]);
+        $post->setPostDate(new DateTime($array["post_date"]));
+        $post->setTopicId($array["topic_id"]);
+
+        return $post;
     }
 }

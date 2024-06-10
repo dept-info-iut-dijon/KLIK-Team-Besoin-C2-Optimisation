@@ -11,12 +11,15 @@ class PostController {
         $this->postManager = new PostManager();
     }
 
-    public function createPost() {
+    /**
+     * @throws Exception
+     */
+    public function createPost(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['post'])) {
-                $postArray = $data['post'];
-                $post = Post::createFromObject($postArray);
+                $post = Post::createFromObject($data['post']);
 
                 $result = $this->postManager->createPost($post);
 
@@ -31,7 +34,11 @@ class PostController {
         }
     }
 
-    public function getPostById($postId) {
+    /**
+     * @throws Exception
+     */
+    public function getPostById($postId): void
+    {
         $post = $this->postManager->getPostById($postId);
         if ($post) {
             echo json_encode($post->toArray());
@@ -40,13 +47,15 @@ class PostController {
         }
     }
 
-    public function updatePost() {
+    /**
+     * @throws Exception
+     */
+    public function updatePost(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['post'])) {
-                $postArray = $data['post'];
-
-                $post = Post::createFromObject($postArray);
+                $post = Post::createFromObject($data['post']);
 
                 $result = $this->postManager->updatePost($post);
 
@@ -61,7 +70,11 @@ class PostController {
         }
     }
 
-    public function deletePost($postId) {
+    /**
+     * @throws Exception
+     */
+    public function deletePost($postId): void
+    {
         $result = $this->postManager->deletePost($postId);
 
         if ($result) {
@@ -71,14 +84,15 @@ class PostController {
         }
     }
 
-    public function getAllPosts() {
+    /**
+     * @throws Exception
+     */
+    public function getAllPosts(): void
+    {
         
         $posts = $this->postManager->getAllPosts();
-        $postArray = [];
-        foreach ($posts as $post) {
-            $postArray[] = $post->toArray();
-        }
-        echo json_encode($postArray);
+
+        echo json_encode(array_map(function($post) { return $post->toArray(); }, $posts));
     }
 }
 
@@ -86,31 +100,37 @@ if (isset($_GET['action'])) {
     $controller = new PostController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createPost();
-            break;
-        case 'read':
-            if (isset($_GET['postId'])) {
-                $controller->getPostById(intval($_GET['postId']));
-            }
-            break;
-        case 'update':
-            $controller->updatePost();
-            break;
-        case 'delete':
-            if (isset($_GET['postId'])) {
-                $controller->deletePost(intval($_GET['postId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllPosts();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createPost();
+                break;
+            case 'read':
+                if (isset($_GET['postId'])) {
+                    $controller->getPostById(intval($_GET['postId']));
+                }
+                break;
+            case 'update':
+                $controller->updatePost();
+                break;
+            case 'delete':
+                if (isset($_GET['postId'])) {
+                    $controller->deletePost(intval($_GET['postId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllPosts();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>

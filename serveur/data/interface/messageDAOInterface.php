@@ -6,4 +6,5 @@ interface MessageDAOInterface {
     public function update(Message $message): bool;
     public function delete(int $messageId): bool;
     public function getAll(): array;
+    public function getMessagesByConversation(int $conversationId): array;
 }

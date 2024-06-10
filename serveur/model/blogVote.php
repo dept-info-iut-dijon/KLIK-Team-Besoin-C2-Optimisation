@@ -1,21 +1,20 @@
 <?php
 
 require_once 'user.php';
-require_once 'blog.php';
 
 class BlogVote {
     private int $blogVoteId;
     private DateTime $blogVoteDate;
     private int $blogVote;
-    private User $user;
-    private Blog $blog;
+    private User $blogVoteUser;
+    private int $blogId;
 
-    public function __construct(int $blogVoteId, DateTime $blogVoteDate, int $blogVote, User $user, Blog $blog) {
-        $this->blogVoteId = $blogVoteId;
-        $this->blogVoteDate = $blogVoteDate;
-        $this->blogVote = $blogVote;
-        $this->user = $user;
-        $this->blog = $blog;
+    public function __construct() {
+        $this->blogVoteId = 0;
+        $this->blogVoteDate = new DateTime();
+        $this->blogVote = 0;
+        $this->blogVoteUser = new User();
+        $this->blogId = 0;
     }
 
     // Getters
@@ -31,12 +30,12 @@ class BlogVote {
         return $this->blogVote;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getBlogVoteUser(): User {
+        return $this->blogVoteUser;
     }
 
-    public function getBlog(): Blog {
-        return $this->blog;
+    public function getBlogId(): int {
+        return $this->blogVote;
     }
 
     // Setters
@@ -52,12 +51,12 @@ class BlogVote {
         $this->blogVote = $blogVote;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setBlogVoteUser(User $user): void {
+        $this->blogVoteUser = $user;
     }
 
-    public function setBlog(Blog $blog): void {
-        $this->blog = $blog;
+    public function setBlogId(int $blogId): void {
+        $this->blogId = $blogId;
     }
 
     public function toArray(): array {
@@ -65,8 +64,32 @@ class BlogVote {
             'blogVoteId' => $this->blogVoteId,
             'blogVoteDate' => $this->blogVoteDate->format('Y-m-d H:i:s'),
             'blogVote' => $this->blogVote,
-            'user' => $this->user->toArray(),
-            'blog' => $this->blog->toArray()  
+            'blogVoteUser' => $this->blogVoteUser->toArray(),
+            'blogId' => $this->blogId,
         ];
+    }
+
+    public static function createFromObject($obj): BlogVote {
+        $blogVote = new BlogVote();
+
+        $blogVote->setBlogVoteId($obj->blogVoteId);
+        $blogVote->setBlogVoteDate(new DateTime($obj->blogVoteDate));
+        $blogVote->setBlogVote($obj->blogVote);
+        $blogVote->setBlogVoteUser(User::createFromObject($obj->blogId));
+        $blogVote->setBlogId($obj->blogId);
+
+        return $blogVote;
+    }
+
+    public static function createFromDb($array): BlogVote
+    {
+        $blogVote = new BlogVote();
+
+        $blogVote->setBlogVoteId($array["blog_Vote_id"]);
+        $blogVote->setBlogVoteDate(new DateTime($array["blog_Vote_date"]));
+        $blogVote->setBlogVote($array["blog_Vote"]);
+        $blogVote->setBlogId($array["blog_id"]);
+
+        return $blogVote;
     }
 }

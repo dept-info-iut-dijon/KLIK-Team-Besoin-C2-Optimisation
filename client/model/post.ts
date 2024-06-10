@@ -6,7 +6,7 @@ export class Post {
     private postId: number;
     private postContent: string;
     private postDate: Date;
-    private postTopic: Topic;
+    private postTopic: number;
     private postVotes: Array<PostVote>;
     private postUser: User;
 
@@ -34,11 +34,11 @@ export class Post {
         this.postDate = value;
     }
 
-    public get PostTopic(): Topic {
+    public get PostTopic(): number {
         return this.postTopic;
     }
 
-    public set PostTopic(value: Topic) {
+    public set PostTopic(value: number) {
         this.postTopic = value;
     }
 
@@ -62,7 +62,7 @@ export class Post {
         this.postId = 0;
         this.postContent = "";
         this.postDate = new Date();
-        this.postTopic = new Topic();
+        this.postTopic = 0;
         this.postVotes = new Array<PostVote>();
         this.postUser = new User();
     }
@@ -72,7 +72,7 @@ export class Post {
         post.PostId = obj.postId || 0;
         post.PostContent = obj.postContent || "";
         post.PostDate = obj.postDate ? new Date(obj.postDate) : new Date();
-        post.PostTopic = obj.postTopic ? Topic.createFromObject(obj.postTopic) : new Topic();
+        post.PostTopic = obj.postTopic || 0;
         post.PostVotes = obj.postVotes ? obj.postVotes.map((vote: any) => PostVote.createFromObject(vote)) : new Array<PostVote>();
         post.PostUser = obj.postUser ? User.createFromObject(obj.postUser) : new User();
         return post;

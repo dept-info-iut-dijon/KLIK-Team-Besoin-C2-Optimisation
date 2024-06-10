@@ -1,88 +1,139 @@
 <?php
 require_once '../data/interface/blogVoteDAOInterface.php';
-require_once '../model/blogVote.php*';
+require_once '../model/blogVote.php';
 
 require_once 'userDAO.php';
-require_once '../model/user.php';
-
 require_once 'blogDAO.php';
-require_once '../model/blog.php';
 
 class BlogVoteDAO implements BlogVoteDAOInterface {
-    private $pdo;
+    private Database $db;
+    private UserDAO $userDAO;
 
     public function __construct() {
-        $this->pdo = Database::getInstance();
+        $this->db = new Database();
+        $this->userDAO = new UserDAO();
     }
 
+    /**
+     * @throws Exception
+     */
     public function create(BlogVote $blogVote): bool {
-        $sql = "INSERT INTO Blog_Votes (blog_Vote_date, blog_Vote, user_id, blog_id) VALUES (?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $blogVote->getBlogVoteDate()->format('Y-m-d'),
-            $blogVote->getBlogVote(),
-            $blogVote->getUser()->getUserId(),
-            $blogVote->getBlog()->getBlogId()
-        ]);
-    }
+        $this->db->beginTransaction();
 
-    public function read(int $blogVoteId): ?BlogVote {
-        $sql = "SELECT * FROM Blog_Votes WHERE blog_Vote_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$blogVoteId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        try
+        {
+            $params = [
+                "blog_Vote_date" => $blogVote->getBlogVoteDate()->format('Y-m-d'),
+                "blog_Vote" => $blogVote->getBlogVote(),
+                "user_id" => $blogVote->getBlogVoteUser()->getUserId(),
+                "blog_id" => $blogVote->getBlogId()
+            ];
+            $sql = "INSERT INTO Blog_Votes (blog_Vote_date, blog_Vote, user_id, blog_id) VALUES (:blog_Vote_date, :blog_Vote, :user_id, :blog_id)";
 
-        if ($row) {
-            $userDAO = new UserDAO();
-            $blogDAO = new BlogDAO();
-            $user = $userDAO->read($row['user_id']);
-            $blog = $blogDAO->read($row['blog_id']);
-            return new BlogVote(
-                $row['blog_Vote_id'],
-                new DateTime($row['blog_Vote_date']),
-                $row['blog_Vote'],
-                $user,
-                $blog
-            );
+            $this->db->execute($sql, $params);
+            $this->db->commit();
         }
-        return null;
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
+    public function read(int $blogVoteId): BlogVote {
+        $result = $this->db->query("SELECT * FROM Blog_Votes WHERE blog_Vote_id = :blog_Vote_id", [":blog_Vote_id" => $blogVoteId]);
+
+        if(count($result) === 0)
+            throw new Exception("BlogVote not found");
+
+        $user = $this->userDAO->read($result[0]["user_id"]);
+
+        $blogVote = BlogVote::createFromDb($result[0]);
+        $blogVote->setBlogVoteUser($user);
+
+        return $blogVote;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function update(BlogVote $blogVote): bool {
-        $sql = "UPDATE Blog_Votes SET blog_Vote_date = ?, blog_Vote = ?, user_id = ?, blog_id = ? WHERE blog_Vote_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $blogVote->getBlogVoteDate()->format('Y-m-d'),
-            $blogVote->getBlogVote(),
-            $blogVote->getUser()->getUserId(),
-            $blogVote->getBlog()->getBlogId(),
-            $blogVote->getBlogVoteId()
-        ]);
+        $this->db->beginTransaction();
+
+        try
+        {
+            $params = [
+                "blog_Vote_id" => $blogVote->getBlogId(),
+                "blog_Vote_date" => $blogVote->getBlogVoteDate()->format('Y-m-d'),
+                "blog_Vote" => $blogVote->getBlogVote(),
+                "user_id" => $blogVote->getBlogVoteUser()->getUserId(),
+                "blog_id" => $blogVote->getBlogId()
+            ];
+            $sql = "UPDATE Blog_Votes SET blog_Vote_date = :blog_Vote_date, blog_Vote = :blog_Vote, user_id = :user_id, blog_id = :blog_id WHERE blog_Vote_id = :blog_Vote_id";
+
+            $this->db->execute($sql, $params);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
+    /**
+     * @throws Exception
+     */
     public function delete(int $blogVoteId): bool {
-        $sql = "DELETE FROM Blog_Votes WHERE blog_Vote_id = ?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([$blogVoteId]);
+        $this->db->beginTransaction();
+        try
+        {
+            $this->db->query("DELETE FROM Blog_Votes WHERE blog_Vote_id = :blog_Vote_id", [":blog_Vote_id" => $blogVoteId]);
+            $this->db->commit();
+        }
+        catch (Exception $e)
+        {
+            $this->db->rollBack();
+            throw $e;
+        }
+
+        return true;
     }
 
     public function getAll(): array {
-        $sql = "SELECT * FROM Blog_Votes";
-        $stmt = $this->pdo->query($sql);
-        $blogVotes = [];
-        $userDAO = new UserDAO();
-        $blogDAO = new BlogDAO();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $user = $userDAO->read($row['user_id']);
-            $blog = $blogDAO->read($row['blog_id']);
-            $blogVotes[] = new BlogVote(
-                $row['blog_Vote_id'],
-                new DateTime($row['blog_Vote_date']),
-                $row['blog_Vote'],
-                $user,
-                $blog
-            );
-        }
-        return $blogVotes;
+        $blogVotes = $this->db->query("SELECT * FROM Blog_Votes");
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $blogVote = BlogVote::createFromDb($item);
+            $blogVote->setBlogVoteUser($user);
+
+            return $blogVote;
+        }, $blogVotes);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getBlogVoteByBlog(int $blogId): array
+    {
+        $result = $this->db->query("SELECT * FROM Blog_Votes WHERE blog_id = :blod_id", [":blod_id" => $blogId]);
+
+        return array_map(function($item) {
+            $user = $this->userDAO->read($item["user_id"]);
+
+            $blogVote = BlogVote::createFromDb($item);
+            $blogVote->setBlogVoteUser($user);
+
+            return $blogVote;
+        }, $result);
     }
 }

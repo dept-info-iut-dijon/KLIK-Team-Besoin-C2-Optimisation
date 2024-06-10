@@ -10,21 +10,15 @@ class EventController {
         $this->eventManager = new EventManager();
     }
 
-    public function createEvent() {
+    /**
+     * @throws Exception
+     */
+    public function createEvent(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['event'])) {
-                $eventArray = $data['event'];
-                $event = new Event(
-                    0, 
-                    $eventArray['eventTitle'],
-                    new DateTime($eventArray['eventDateCreated']),
-                    new DateTime($eventArray['eventDate']),
-                    $eventArray['eventImg'],
-                    $eventArray['eventHeadline'],
-                    $eventArray['eventDescription'],
-                    (new UserDAO())->read($eventArray['userId'])
-                );
+                $event = Event::createFromObject($data['event']);
 
                 $result = $this->eventManager->createEvent($event);
 
@@ -39,8 +33,13 @@ class EventController {
         }
     }
 
-    public function getEventById($eventId) {
+    /**
+     * @throws Exception
+     */
+    public function getEventById($eventId): void
+    {
         $event = $this->eventManager->getEventById($eventId);
+
         if ($event) {
             echo json_encode($event->toArray());
         } else {
@@ -48,21 +47,15 @@ class EventController {
         }
     }
 
-    public function updateEvent() {
+    /**
+     * @throws Exception
+     */
+    public function updateEvent(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['event'])) {
-                $eventArray = $data['event'];
-                $event = new Event(
-                    $eventArray['eventId'],
-                    $eventArray['eventTitle'],
-                    new DateTime($eventArray['eventDateCreated']),
-                    new DateTime($eventArray['eventDate']),
-                    $eventArray['eventImg'],
-                    $eventArray['eventHeadline'],
-                    $eventArray['eventDescription'],
-                    (new UserDAO())->read($eventArray['userId'])
-                );
+                $event = Event::createFromObject($data['event']);
 
                 $result = $this->eventManager->updateEvent($event);
 
@@ -77,7 +70,11 @@ class EventController {
         }
     }
 
-    public function deleteEvent($eventId) {
+    /**
+     * @throws Exception
+     */
+    public function deleteEvent($eventId): void
+    {
         $result = $this->eventManager->deleteEvent($eventId);
 
         if ($result) {
@@ -87,13 +84,14 @@ class EventController {
         }
     }
 
-    public function getAllEvents() {
+    /**
+     * @throws Exception
+     */
+    public function getAllEvents(): void
+    {
         $events = $this->eventManager->getAllEvents();
-        $eventsArray = [];
-        foreach ($events as $event) {
-            $eventsArray[] = $event;
-        }
-        echo json_encode($eventsArray);
+
+        echo json_encode(array_map(function($event) { return $event->toArray(); }, $events));
     }
 }
 
@@ -101,32 +99,37 @@ if (isset($_GET['action'])) {
     $controller = new EventController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createEvent();
-            break;
-        case 'read':
-            if (isset($_GET['eventId'])) {
-                $controller->getEventById(intval($_GET['eventId']));
-            }
-            break;
-        case 'update':
-            $controller->updateEvent();
-            break;
-        case 'delete':
-            if (isset($_GET['eventId'])) {
-                $controller->deleteEvent(intval($_GET['eventId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllEvents();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createEvent();
+                break;
+            case 'read':
+                if (isset($_GET['eventId'])) {
+                    $controller->getEventById(intval($_GET['eventId']));
+                }
+                break;
+            case 'update':
+                $controller->updateEvent();
+                break;
+            case 'delete':
+                if (isset($_GET['eventId'])) {
+                    $controller->deleteEvent(intval($_GET['eventId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllEvents();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-
-?>

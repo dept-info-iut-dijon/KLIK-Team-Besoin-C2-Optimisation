@@ -6,4 +6,5 @@ interface PostVoteDAOInterface {
     public function update(PostVote $postVote): bool;
     public function delete(int $postVoteId): bool;
     public function getAll(): array;
+    public function getPostVoteByPost(int $postId): array;
 }

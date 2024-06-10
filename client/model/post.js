@@ -1,4 +1,3 @@
-import { Topic } from "./topic";
 import { PostVote } from "./postVote";
 import { User } from "./user";
 export class Post {
@@ -42,7 +41,7 @@ export class Post {
         this.postId = 0;
         this.postContent = "";
         this.postDate = new Date();
-        this.postTopic = new Topic();
+        this.postTopic = 0;
         this.postVotes = new Array();
         this.postUser = new User();
     }
@@ -51,7 +50,7 @@ export class Post {
         post.PostId = obj.postId || 0;
         post.PostContent = obj.postContent || "";
         post.PostDate = obj.postDate ? new Date(obj.postDate) : new Date();
-        post.PostTopic = obj.postTopic ? Topic.createFromObject(obj.postTopic) : new Topic();
+        post.PostTopic = obj.postTopic || 0;
         post.PostVotes = obj.postVotes ? obj.postVotes.map((vote) => PostVote.createFromObject(vote)) : new Array();
         post.PostUser = obj.postUser ? User.createFromObject(obj.postUser) : new User();
         return post;

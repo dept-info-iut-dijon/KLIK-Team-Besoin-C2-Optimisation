@@ -43,7 +43,7 @@ class UserController
         }
     }
 
-    public function getUserById($userId)
+    public function getUserById($userId): User
     {
         $user = $this->userManager->getUserById($userId);
         if ($user) {

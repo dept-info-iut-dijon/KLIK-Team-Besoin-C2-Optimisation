@@ -1,5 +1,6 @@
 import { Category } from "./category";
 import { User } from "./user";
+import { Post } from "./post";
 export class Topic {
     get TopicId() {
         return this.topicId;
@@ -37,6 +38,7 @@ export class Topic {
         this.topicDate = new Date();
         this.topicCategory = new Category();
         this.topicUser = new User();
+        this.topicPosts = new Array();
     }
     static createFromObject(obj) {
         const topic = new Topic();
@@ -45,6 +47,7 @@ export class Topic {
         topic.TopicDate = obj.topicDate ? new Date(obj.topicDate) : new Date();
         topic.TopicCategory = obj.topicCategory ? Category.createFromObject(obj.topicCategory) : new Category();
         topic.TopicUser = obj.topicUser ? User.createFromObject(obj.topicUser) : new User();
+        topic.topicPosts = obj.topicPosts ? obj.topicPosts.map((vote) => Post.createFromObject(vote)) : new Array();
         return topic;
     }
 }

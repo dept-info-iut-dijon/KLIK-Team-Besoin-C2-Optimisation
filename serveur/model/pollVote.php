@@ -5,13 +5,13 @@ require_once 'pollOption.php';
 
 class PollVote {
     private int $pollVoteId;
-    private User $user;
-    private PollOption $pollOption;
+    private User $pollVoteUser;
+    private int $pollOptionId;
 
-    public function __construct(int $pollVoteId, User $user, PollOption $pollOption) {
-        $this->pollVoteId = $pollVoteId;
-        $this->user = $user;
-        $this->pollOption = $pollOption;
+    public function __construct() {
+        $this->pollVoteId = 0;
+        $this->pollVoteUser = new User();
+        $this->pollOptionId = 0;
     }
 
     // Getters
@@ -19,12 +19,12 @@ class PollVote {
         return $this->pollVoteId;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getPollVoteUser(): User {
+        return $this->pollVoteUser;
     }
 
-    public function getPollOption(): PollOption {
-        return $this->pollOption;
+    public function getPollOptionId(): int {
+        return $this->pollOptionId;
     }
 
     // Setters
@@ -32,19 +32,38 @@ class PollVote {
         $this->pollVoteId = $pollVoteId;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setPollVoteUser(User $user): void {
+        $this->pollVoteUser = $user;
     }
 
-    public function setPollOption(PollOption $pollOption): void {
-        $this->pollOption = $pollOption;
+    public function setPollOptionId(int $pollOptionId): void {
+        $this->pollOptionId = $pollOptionId;
     }
 
     public function toArray(): array {
         return [
             'pollVoteId' => $this->pollVoteId,
-            'user' => $this->user->toArray(),
-            'pollOption' => $this->pollOption->toArray()
+            'pollVoteUser' => $this->pollVoteUser->toArray(),
+            'pollOptionId' => $this->pollOptionId,
         ];
+    }
+
+    public static function createFromObject($obj): PollVote {
+        $pollVote = new PollVote();
+
+        $pollVote->setPollVoteId($obj->pollVoteId);
+        $pollVote->setPollVoteUser(User::createFromObject($obj->pollVoteUser));
+        $pollVote->setPollOptionId($obj->pollOptionId);
+
+        return $pollVote;
+    }
+
+    public static function createFromDb($array): PollVote {
+        $pollVote = new PollVote();
+
+        $pollVote->setPollVoteId($array["poll_Vote_id"]);
+        $pollVote->setPollOptionId($array["poll_Option_id"]);
+
+        return $pollVote;
     }
 }

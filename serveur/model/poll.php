@@ -1,6 +1,7 @@
 <?php
 
 require_once 'user.php';
+require_once 'pollOption.php';
 
 class Poll {
     private int $pollId;
@@ -10,17 +11,19 @@ class Poll {
     private bool $pollStatus;
     private string $pollDescription;
     private bool $pollLocked;
-    private User $user;
+    private User $pollUser;
+    private array $pollOptions;
 
-    public function __construct(int $pollId, string $pollSubject, DateTime $pollCreated, DateTime $pollModified, bool $pollStatus, string $pollDescription, bool $pollLocked, User $user) {
-        $this->pollId = $pollId;
-        $this->pollSubject = $pollSubject;
-        $this->pollCreated = $pollCreated;
-        $this->pollModified = $pollModified;
-        $this->pollStatus = $pollStatus;
-        $this->pollDescription = $pollDescription;
-        $this->pollLocked = $pollLocked;
-        $this->user = $user;
+    public function __construct() {
+        $this->pollId = 0;
+        $this->pollSubject = "";
+        $this->pollCreated = new DateTime();
+        $this->pollModified = new DateTime();
+        $this->pollStatus = false;
+        $this->pollDescription = "";
+        $this->pollLocked = false;
+        $this->pollUser = new User();
+        $this->pollOptions = array();
     }
 
     // Getters
@@ -52,8 +55,12 @@ class Poll {
         return $this->pollLocked;
     }
 
-    public function getUser(): User {
-        return $this->user;
+    public function getPollUser(): User {
+        return $this->pollUser;
+    }
+
+    public function getPollOptions(): array {
+        return $this->pollOptions;
     }
 
     // Setters
@@ -85,8 +92,12 @@ class Poll {
         $this->pollLocked = $pollLocked;
     }
 
-    public function setUser(User $user): void {
-        $this->user = $user;
+    public function setPollUser(User $user): void {
+        $this->pollUser = $user;
+    }
+
+    public function setPollOptions(array $pollOptions): void {
+        $this->pollOptions = $pollOptions;
     }
 
     public function toArray(): array {
@@ -98,7 +109,40 @@ class Poll {
             'pollStatus' => $this->pollStatus,
             'pollDescription' => $this->pollDescription,
             'pollLocked' => $this->pollLocked,
-            'user' => $this->user->toArray() 
+            'pollUser' => $this->pollUser->toArray(),
+            'pollOptions' => array_map(function($pollOption) { return $pollOption->toArray(); }, $this->pollOptions)
         ];
+    }
+
+    public static function createFromObject($obj): Poll {
+        $poll = new Poll();
+
+        $poll->setPollId($obj->pollId);
+        $poll->setPollSubject($obj->pollSubject);
+        $poll->setPollCreated(new DateTime($obj->pollCreated));
+        $poll->setPollModified(new DateTime($obj->pollModified));
+        $poll->setPollStatus($obj->pollStatus);
+        $poll->setPollDescription($obj->pollDescription);
+        $poll->setPollLocked($obj->pollLocked);
+        $poll->setPollUser(User::createFromObject($obj->pollUser));
+        $poll->setPollOptions(array_map(function($pollOption) {
+            return PollOption::createFromObject($pollOption);
+        }, $obj->pollOptions));
+
+        return $poll;
+    }
+
+    public static function createFromDb($array): Poll {
+        $poll = new Poll();
+
+        $poll->setPollId($array["poll_id"]);
+        $poll->setPollSubject($array["poll_subject"]);
+        $poll->setPollCreated(new DateTime($array["poll_created"]));
+        $poll->setPollModified(new DateTime($array["poll_modified"]));
+        $poll->setPollStatus($array["poll_status"]);
+        $poll->setPollDescription($array["poll_description"]);
+        $poll->setPollLocked($array["poll_locked"] == 1);
+
+        return $poll;
     }
 }

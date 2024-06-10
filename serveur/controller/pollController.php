@@ -10,21 +10,15 @@ class PollController {
         $this->pollManager = new PollManager();
     }
 
-    public function createPoll() {
+    /**
+     * @throws Exception
+     */
+    public function createPoll(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['poll'])) {
-                $pollArray = $data['poll'];
-                $poll = new Poll(
-                    0, // Assuming 0 for new Poll ID
-                    $pollArray['pollSubject'],
-                    new DateTime($pollArray['pollCreated']),
-                    new DateTime($pollArray['pollModified']),
-                    $pollArray['pollStatus'],
-                    $pollArray['pollDescription'],
-                    $pollArray['pollLocked'],
-                    (new UserDAO())->read($pollArray['userId'])
-                );
+                $poll = Poll::createFromObject($data["poll"]);
 
                 $result = $this->pollManager->createPoll($poll);
 
@@ -39,8 +33,13 @@ class PollController {
         }
     }
 
-    public function getPollById($pollId) {
+    /**
+     * @throws Exception
+     */
+    public function getPollById($pollId): void
+    {
         $poll = $this->pollManager->getPollById($pollId);
+
         if ($poll) {
             echo json_encode($poll->toArray());
         } else {
@@ -48,21 +47,15 @@ class PollController {
         }
     }
 
-    public function updatePoll() {
+    /**
+     * @throws Exception
+     */
+    public function updatePoll(): void
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
             if ($data && isset($data['poll'])) {
-                $pollArray = $data['poll'];
-                $poll = new Poll(
-                    $pollArray['pollId'],
-                    $pollArray['pollSubject'],
-                    new DateTime($pollArray['pollCreated']),
-                    new DateTime($pollArray['pollModified']),
-                    $pollArray['pollStatus'],
-                    $pollArray['pollDescription'],
-                    $pollArray['pollLocked'],
-                    (new UserDAO())->read($pollArray['userId'])
-                );
+                $poll = Poll::createFromObject($data["poll"]);
 
                 $result = $this->pollManager->updatePoll($poll);
 
@@ -77,7 +70,11 @@ class PollController {
         }
     }
 
-    public function deletePoll($pollId) {
+    /**
+     * @throws Exception
+     */
+    public function deletePoll($pollId): void
+    {
         $result = $this->pollManager->deletePoll($pollId);
 
         if ($result) {
@@ -87,13 +84,14 @@ class PollController {
         }
     }
 
-    public function getAllPolls() {
+    /**
+     * @throws Exception
+     */
+    public function getAllPolls(): void
+    {
         $polls = $this->pollManager->getAllPolls();
-        $pollArray = [];
-        foreach ($polls as $poll) {
-            $pollArray[] = $poll->toArray();
-        }
-        echo json_encode($pollArray);
+
+        echo json_encode(array_map(function($poll) { return $poll->toArray(); }, $polls));
     }
 }
 
@@ -101,31 +99,37 @@ if (isset($_GET['action'])) {
     $controller = new PollController();
     $action = $_GET['action'];
 
-    switch ($action) {
-        case 'create':
-            $controller->createPoll();
-            break;
-        case 'read':
-            if (isset($_GET['pollId'])) {
-                $controller->getPollById(intval($_GET['pollId']));
-            }
-            break;
-        case 'update':
-            $controller->updatePoll();
-            break;
-        case 'delete':
-            if (isset($_GET['pollId'])) {
-                $controller->deletePoll(intval($_GET['pollId']));
-            }
-            break;
-        case 'all':
-            $controller->getAllPolls();
-            break;
-        default:
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-            break;
+    try
+    {
+        switch ($action) {
+            case 'create':
+                $controller->createPoll();
+                break;
+            case 'read':
+                if (isset($_GET['pollId'])) {
+                    $controller->getPollById(intval($_GET['pollId']));
+                }
+                break;
+            case 'update':
+                $controller->updatePoll();
+                break;
+            case 'delete':
+                if (isset($_GET['pollId'])) {
+                    $controller->deletePoll(intval($_GET['pollId']));
+                }
+                break;
+            case 'all':
+                $controller->getAllPolls();
+                break;
+            default:
+                echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
+                break;
+        }
+    }
+    catch (Exception $e)
+    {
+        echo json_encode(['status' => 'error', 'message' => 'Error has occurred']);
     }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'No action specified']);
 }
-?>
